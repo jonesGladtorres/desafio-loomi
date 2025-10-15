@@ -1,10 +1,17 @@
 ### Arquivo de teste para a API de Transações
 ### Use com REST Client (VSCode Extension) ou ferramentas como Postman/Insomnia
+###
+### VALIDAÇÕES:
+### - amount: número positivo com no máximo 2 casas decimais
+### - type: deve ser 'credit', 'debit' ou 'transfer'
+### - status: deve ser 'pending', 'completed', 'failed' ou 'cancelled'
+### - userId: deve ser um UUID válido de um usuário existente
+### - description: opcional
 
 @baseUrl = http://localhost:3002
 @contentType = application/json
 
-### Criar uma nova transação
+### Criar uma nova transação (crédito)
 POST {{baseUrl}}/api/transactions
 Content-Type: {{contentType}}
 
@@ -92,4 +99,73 @@ Content-Type: {{contentType}}
 
 ### Teste 3: Buscar todas as transações de um usuário
 GET {{baseUrl}}/api/transactions?userId=substitua-por-um-id-valido
+
+### ============================================
+### TESTES DE VALIDAÇÃO (devem retornar erro)
+### ============================================
+
+### Erro: Valor negativo
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": -50.00,
+  "type": "credit",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Erro: Tipo inválido
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "invalid_type",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Erro: Status inválido
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "status": "invalid_status",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Erro: UUID inválido
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "status": "completed",
+  "userId": "not-a-valid-uuid"
+}
+
+### Erro: Usuário não existe
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "status": "completed",
+  "userId": "00000000-0000-0000-0000-000000000000"
+}
+
+### Erro: Campo obrigatório faltando (amount)
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "type": "credit",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
 

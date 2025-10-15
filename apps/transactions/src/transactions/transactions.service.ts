@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '@app/prisma';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -8,6 +12,18 @@ export class TransactionsService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(createTransactionDto: CreateTransactionDto) {
+    // Verifica se o usuário existe
+    const userExists = await this.prisma.user.findUnique({
+      where: { id: createTransactionDto.userId },
+    });
+
+    if (!userExists) {
+      throw new BadRequestException(
+        `User with ID ${createTransactionDto.userId} not found`,
+      );
+    }
+
+    // Cria a transação
     return this.prisma.transaction.create({
       data: createTransactionDto,
       include: {

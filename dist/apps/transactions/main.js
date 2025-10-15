@@ -269,6 +269,12 @@ let TransactionsService = class TransactionsService {
         this.prisma = prisma;
     }
     async create(createTransactionDto) {
+        const userExists = await this.prisma.user.findUnique({
+            where: { id: createTransactionDto.userId },
+        });
+        if (!userExists) {
+            throw new common_1.BadRequestException(`User with ID ${createTransactionDto.userId} not found`);
+        }
         return this.prisma.transaction.create({
             data: createTransactionDto,
             include: {
@@ -450,13 +456,17 @@ class CreateTransactionDto {
 }
 exports.CreateTransactionDto = CreateTransactionDto;
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
+    (0, class_validator_1.IsPositive)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], CreateTransactionDto.prototype, "amount", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsIn)(['credit', 'debit', 'transfer'], {
+        message: 'type must be one of: credit, debit, transfer',
+    }),
     __metadata("design:type", String)
 ], CreateTransactionDto.prototype, "type", void 0);
 __decorate([
@@ -467,10 +477,13 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsIn)(['pending', 'completed', 'failed', 'cancelled'], {
+        message: 'status must be one of: pending, completed, failed, cancelled',
+    }),
     __metadata("design:type", String)
 ], CreateTransactionDto.prototype, "status", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsUUID)('4', { message: 'userId must be a valid UUID' }),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateTransactionDto.prototype, "userId", void 0);

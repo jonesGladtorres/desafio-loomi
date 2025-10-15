@@ -302,12 +302,22 @@ $ npm run start:transactions:prod
 
 #### Endpoints disponíveis:
 
+- **POST** `/api/transactions` - Cria uma nova transação
 - **GET** `/api/transactions` - Lista todas as transações
 - **GET** `/api/transactions?userId={userId}` - Lista transações de um usuário específico
 - **GET** `/api/transactions/:id` - Busca uma transação por ID
-- **POST** `/api/transactions` - Cria uma nova transação
 - **PATCH** `/api/transactions/:id` - Atualiza uma transação
 - **DELETE** `/api/transactions/:id` - Remove uma transação
+
+**Campos do CreateTransactionDto:**
+
+| Campo | Tipo | Validação | Obrigatório |
+|-------|------|-----------|-------------|
+| amount | number | Positivo, máx 2 decimais | Sim |
+| type | string | 'credit', 'debit' ou 'transfer' | Sim |
+| description | string | - | Não |
+| status | string | 'pending', 'completed', 'failed' ou 'cancelled' | Sim |
+| userId | string | UUID válido de usuário existente | Sim |
 
 **Exemplo de uso:**
 
@@ -341,6 +351,8 @@ curl -X PATCH http://localhost:3002/api/transactions/{transactionId} \
 ```
 
 💡 **Dica:** Use o arquivo `apps/transactions/src/transactions/transactions.http` com a extensão REST Client do VSCode para testar os endpoints.
+
+📖 **Documentação completa da API de Transações:** Veja o arquivo `TRANSACTIONS_API.md` para exemplos detalhados, validações e casos de erro.
 
 ## Build das Aplicações
 
