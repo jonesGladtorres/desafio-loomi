@@ -41,6 +41,20 @@ desafio-loomi-nestjs/
 │       ├── src/
 │       ├── test/
 │       └── tsconfig.app.json
+├── libs/
+│   └── prisma/            # Biblioteca compartilhada do Prisma
+│       └── src/
+│           ├── prisma.module.ts
+│           ├── prisma.service.ts
+│           └── index.ts
+├── prisma/
+│   ├── migrations/        # Migrações do banco de dados
+│   │   └── 20241015030242_init/
+│   │       └── migration.sql
+│   └── schema.prisma      # Schema do Prisma com modelos User e Transaction
+├── docker-compose.yml     # Configuração do PostgreSQL
+├── .env                   # Variáveis de ambiente (não versionado)
+├── .env.example           # Template de variáveis de ambiente
 ├── nest-cli.json          # Configuração do monorepo
 └── package.json
 ```
@@ -49,6 +63,116 @@ desafio-loomi-nestjs/
 
 ```bash
 $ npm install
+```
+
+## Configuração do Banco de Dados
+
+Este projeto usa Prisma ORM com PostgreSQL. Siga os passos abaixo para configurar:
+
+### 1. Inicie o banco de dados PostgreSQL
+
+O projeto inclui um `docker-compose.yml` para facilitar a configuração do PostgreSQL:
+
+```bash
+# Inicie o PostgreSQL usando Docker Compose
+$ npm run db:up
+# ou
+$ docker-compose up -d
+
+# Verifique se o container está rodando
+$ docker-compose ps
+
+# Para parar o banco de dados
+$ npm run db:down
+
+# Para resetar o banco (apaga todos os dados)
+$ npm run db:reset
+```
+
+**Credenciais do banco (já configuradas no .env):**
+- **Host**: localhost
+- **Port**: 5432
+- **Database**: loomi_db
+- **User**: loomi_user
+- **Password**: loomi_password
+
+### 2. Execute as migrações do Prisma
+
+```bash
+# Aplica as migrações existentes ao banco de dados
+$ npm run prisma:migrate:deploy
+
+# Ou cria uma nova migração (desenvolvimento)
+$ npm run prisma:migrate
+```
+
+### 3. Gere o Prisma Client
+
+```bash
+$ npm run prisma:generate
+```
+
+### 4. (Opcional) Visualize os dados
+
+```bash
+# Abre o Prisma Studio no navegador
+$ npm run prisma:studio
+```
+
+### Modelos do Banco de Dados
+
+O projeto possui dois modelos principais:
+
+- **User**: Modelo para gerenciamento de clientes
+  - Campos: id, name, email, cpf, phone, address, city, state, zipCode, createdAt, updatedAt
+  
+- **Transaction**: Modelo para gerenciamento de transações
+  - Campos: id, amount, type, description, status, userId, createdAt, updatedAt
+  - Relacionamento: Cada transação pertence a um usuário
+
+### Comandos úteis do Prisma
+
+```bash
+# Abre o Prisma Studio (interface visual do banco)
+$ npm run prisma:studio
+
+# Formata o schema
+$ npm run prisma:format
+
+# Gera o Prisma Client
+$ npm run prisma:generate
+
+# Valida o schema
+$ npx prisma validate
+```
+
+## Biblioteca Prisma Compartilhada
+
+O projeto possui uma biblioteca compartilhada (`@app/prisma`) que contém o `PrismaService` e `PrismaModule`. Esta biblioteca pode ser usada por ambas as aplicações (clients e transactions).
+
+### Como usar o PrismaService
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@app/prisma';
+
+@Injectable()
+export class YourService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll() {
+    // Acesse os modelos diretamente através do PrismaService
+    return this.prisma.user.findMany();
+  }
+}
+```
+
+### Configuração do Prisma Client
+
+O Prisma Client está configurado para ser gerado em `node_modules/@prisma/client`, garantindo que ambas as aplicações do monorepo possam acessá-lo sem problemas. Após qualquer alteração no `schema.prisma`, execute:
+
+```bash
+$ npx prisma generate
 ```
 
 ## Executar as Aplicações
