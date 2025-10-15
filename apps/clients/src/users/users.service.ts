@@ -37,23 +37,26 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    try {
-      return await this.prisma.user.update({
-        where: { id },
-        data: updateUserDto,
-      });
-    } catch (error) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
+    // Verifica se o usuário existe antes de atualizar
+    await this.findOne(id);
+
+    // Atualiza o usuário
+    return this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+      include: {
+        transactions: true,
+      },
+    });
   }
 
   async remove(id: string) {
-    try {
-      return await this.prisma.user.delete({
-        where: { id },
-      });
-    } catch (error) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
+    // Verifica se o usuário existe antes de deletar
+    await this.findOne(id);
+
+    // Deleta o usuário (CASCADE irá deletar as transações relacionadas)
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 }

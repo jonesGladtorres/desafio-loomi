@@ -26,7 +26,7 @@ GET {{baseUrl}}/api/users
 # Substitua {userId} por um ID válido
 GET {{baseUrl}}/api/users/{userId}
 
-### Atualizar um usuário
+### Atualizar um usuário (atualização parcial)
 # Substitua {userId} por um ID válido
 PATCH {{baseUrl}}/api/users/{userId}
 Content-Type: {{contentType}}
@@ -34,6 +34,27 @@ Content-Type: {{contentType}}
 {
   "name": "João Silva Atualizado",
   "phone": "(11) 91234-5678"
+}
+
+### Atualizar apenas o email do usuário
+# Substitua {userId} por um ID válido
+PATCH {{baseUrl}}/api/users/{userId}
+Content-Type: {{contentType}}
+
+{
+  "email": "joao.novo@example.com"
+}
+
+### Atualizar endereço completo do usuário
+# Substitua {userId} por um ID válido
+PATCH {{baseUrl}}/api/users/{userId}
+Content-Type: {{contentType}}
+
+{
+  "address": "Avenida Paulista, 1000",
+  "city": "São Paulo",
+  "state": "SP",
+  "zipCode": "01310-100"
 }
 
 ### Deletar um usuário

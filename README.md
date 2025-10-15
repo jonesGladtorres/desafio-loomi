@@ -219,9 +219,22 @@ curl http://localhost:3001/api/users/{userId}
 
 # Listar todos os usuários
 curl http://localhost:3001/api/users
+
+# Atualizar um usuário (atualização parcial)
+curl -X PATCH http://localhost:3001/api/users/{userId} \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva Atualizado",
+    "phone": "(11) 91234-5678"
+  }'
+
+# Deletar um usuário
+curl -X DELETE http://localhost:3001/api/users/{userId}
 ```
 
 💡 **Dica:** Use o arquivo `apps/clients/src/users/users.http` com a extensão REST Client do VSCode para testar os endpoints.
+
+📖 **Documentação completa:** Veja o arquivo `USAGE_EXAMPLES.md` para mais exemplos de uso da API.
 
 ### Aplicação Transactions (Porta 3002)
 

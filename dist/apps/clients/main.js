@@ -290,25 +290,20 @@ let UsersService = class UsersService {
         return user;
     }
     async update(id, updateUserDto) {
-        try {
-            return await this.prisma.user.update({
-                where: { id },
-                data: updateUserDto,
-            });
-        }
-        catch (error) {
-            throw new common_1.NotFoundException(`User with ID ${id} not found`);
-        }
+        await this.findOne(id);
+        return this.prisma.user.update({
+            where: { id },
+            data: updateUserDto,
+            include: {
+                transactions: true,
+            },
+        });
     }
     async remove(id) {
-        try {
-            return await this.prisma.user.delete({
-                where: { id },
-            });
-        }
-        catch (error) {
-            throw new common_1.NotFoundException(`User with ID ${id} not found`);
-        }
+        await this.findOne(id);
+        return this.prisma.user.delete({
+            where: { id },
+        });
     }
 };
 exports.UsersService = UsersService;
@@ -483,23 +478,73 @@ module.exports = require("class-validator");
 
 /***/ }),
 /* 15 */
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateUserDto = void 0;
-const mapped_types_1 = __webpack_require__(16);
-const create_user_dto_1 = __webpack_require__(13);
-class UpdateUserDto extends (0, mapped_types_1.PartialType)(create_user_dto_1.CreateUserDto) {
+const class_validator_1 = __webpack_require__(14);
+class UpdateUserDto {
+    name;
+    email;
+    cpf;
+    phone;
+    address;
+    city;
+    state;
+    zipCode;
 }
 exports.UpdateUserDto = UpdateUserDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "cpf", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "city", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "state", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "zipCode", void 0);
 
-
-/***/ }),
-/* 16 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/mapped-types");
 
 /***/ })
 /******/ 	]);
