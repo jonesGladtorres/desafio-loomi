@@ -28,6 +28,12 @@ Monorepo NestJS para o Desafio Loomi contendo duas aplicações:
 - **clients** - API para gerenciamento de clientes (porta 3001)
 - **transactions** - API para gerenciamento de transações (porta 3002)
 
+⚡ **Quick Start**: Execute `npm run setup` ou `make setup` para configurar tudo automaticamente!
+
+📖 **Referência Rápida**: 
+- `QUICK_REFERENCE.md` - Lista completa de comandos NPM
+- `Makefile` - Use `make help` para ver comandos disponíveis
+
 ## Estrutura do Projeto
 
 ```
@@ -52,54 +58,160 @@ desafio-loomi-nestjs/
 │   │   └── 20241015030242_init/
 │   │       └── migration.sql
 │   └── schema.prisma      # Schema do Prisma com modelos User e Transaction
-├── docker-compose.yml     # Configuração do PostgreSQL e Redis
+├── docker-compose.yml     # Orquestração completa (produção)
+├── docker-compose.dev.yml # Apenas infraestrutura (desenvolvimento)
+├── apps/
+│   ├── clients/Dockerfile      # Dockerfile otimizado para clients
+│   └── transactions/Dockerfile # Dockerfile otimizado para transactions
+├── .dockerignore          # Arquivos ignorados no build Docker
 ├── .env                   # Variáveis de ambiente (não versionado)
 ├── .env.example           # Template de variáveis de ambiente
 ├── nest-cli.json          # Configuração do monorepo
-├── CACHE.md               # Documentação do sistema de cache
+├── DOCKER.md              # Documentação completa do Docker
+├── QUICK_REFERENCE.md     # Referência rápida de comandos
+├── Makefile               # Comandos Make para facilitar o uso
+├── scripts/
+│   └── setup.sh           # Script de setup automático
 └── package.json
 ```
 
-## Instalação
+## Quick Start
+
+### Setup Automático (Recomendado)
+
+Execute o script de setup que configura tudo automaticamente:
+
+```bash
+# Clone o repositório (se ainda não fez)
+# git clone <repository-url>
+# cd desafio-loomi-nestjs
+
+# Execute o script de setup
+$ npm run setup
+```
+
+Este script irá:
+1. ✅ Instalar dependências
+2. ✅ Criar arquivo .env
+3. ✅ Iniciar PostgreSQL, Redis e RabbitMQ em containers
+4. ✅ Gerar Prisma Client
+5. ✅ Aplicar migrações do banco
+6. ✅ Fazer build das aplicações
+
+Depois, inicie as aplicações:
+
+```bash
+# Terminal 1 - App Clients
+$ npm run start:clients:dev
+
+# Terminal 2 - App Transactions
+$ npm run start:transactions:dev
+```
+
+### Setup Manual
+
+Se preferir configurar manualmente:
+
+```bash
+# 1. Instalar dependências
+$ npm install
+
+# 2. Iniciar infraestrutura
+$ npm run docker:dev:up
+
+# 3. Configurar banco de dados
+$ npm run prisma:generate
+$ npm run prisma:migrate:deploy
+
+# 4. Iniciar aplicações
+$ npm run start:clients:dev
+$ npm run start:transactions:dev
+```
+
+## Instalação Detalhada
+
+### Instalação de Dependências
 
 ```bash
 $ npm install
 ```
 
-## Configuração do Banco de Dados
+## Docker - Executar com Containers
 
-Este projeto usa Prisma ORM com PostgreSQL. Siga os passos abaixo para configurar:
+O projeto possui configurações Docker completas para execução em containers.
 
-### 1. Inicie o banco de dados PostgreSQL
+### Modo 1: Desenvolvimento (apenas infraestrutura)
 
-O projeto inclui um `docker-compose.yml` para facilitar a configuração do PostgreSQL:
+Use este modo quando quiser desenvolver localmente mas usar os serviços em containers:
 
 ```bash
-# Inicie o PostgreSQL usando Docker Compose
-$ npm run db:up
-# ou
-$ docker-compose up -d
+# Iniciar PostgreSQL, Redis e RabbitMQ
+$ npm run docker:dev:up
 
-# Verifique se o container está rodando
-$ docker-compose ps
+# Ver logs
+$ npm run docker:dev:logs
 
-# Para parar o banco de dados
-$ npm run db:down
-
-# Para resetar o banco (apaga todos os dados)
-$ npm run db:reset
+# Parar serviços
+$ npm run docker:dev:down
 ```
 
-**Credenciais do banco (já configuradas no .env):**
-- **Host**: localhost
-- **Port**: 5432
-- **Database**: loomi_db
-- **User**: loomi_user
-- **Password**: loomi_password
+Depois inicie as aplicações localmente:
+```bash
+$ npm run start:clients:dev
+$ npm run start:transactions:dev
+```
 
-**Redis (Cache):**
-- **Host**: localhost
-- **Port**: 6379
+### Modo 2: Produção (todos os serviços)
+
+Use este modo para rodar tudo em containers:
+
+```bash
+# Build e iniciar todos os serviços
+$ npm run docker:up
+
+# Ver status dos containers
+$ npm run docker:ps
+
+# Ver logs de todos os serviços
+$ npm run docker:logs
+
+# Aplicar migrações (primeira vez)
+$ docker-compose exec clients-app npx prisma migrate deploy
+
+# Parar todos os serviços
+$ npm run docker:down
+
+# Limpar tudo (remove volumes e imagens)
+$ npm run docker:clean
+```
+
+**Serviços disponíveis:**
+
+| Serviço | URL/Porta | Container | Descrição |
+|---------|-----------|-----------|-----------|
+| Clients API | http://localhost:3001 | loomi-clients-app | API de usuários |
+| Transactions API | http://localhost:3002 | loomi-transactions-app | API de transações |
+| PostgreSQL | localhost:5432 | loomi-postgres | Banco de dados |
+| Redis | localhost:6379 | loomi-redis | Cache |
+| RabbitMQ | localhost:5672 | loomi-rabbitmq | Message broker |
+| RabbitMQ UI | http://localhost:15672 | loomi-rabbitmq | Interface de gerenciamento |
+
+**Credenciais:**
+- **PostgreSQL**: loomi_user / loomi_password / loomi_db
+- **RabbitMQ**: loomi_user / loomi_password
+- **Redis**: sem autenticação
+
+📖 **Documentação completa do Docker:** Veja o arquivo `DOCKER.md` para detalhes sobre arquitetura, troubleshooting e boas práticas.
+
+## Configuração do Banco de Dados (Desenvolvimento Local)
+
+Se você optou por desenvolver localmente sem containers para as aplicações:
+
+### 1. Inicie apenas a infraestrutura
+
+```bash
+$ npm run docker:dev:up
+```
 
 ### 2. Execute as migrações do Prisma
 
@@ -217,6 +329,58 @@ GET "/api/users"
 
 # Limpar todo o cache
 FLUSHALL
+```
+
+## RabbitMQ - Message Broker
+
+O projeto está configurado para usar RabbitMQ como message broker para comunicação assíncrona entre serviços.
+
+### Características
+
+- ✅ **RabbitMQ 3.13**: Versão estável e otimizada
+- ✅ **Management UI**: Interface web para gerenciamento
+- ✅ **Persistência**: Mensagens persistidas em volume Docker
+- ✅ **Health Check**: Monitora disponibilidade do serviço
+
+### Acesso ao RabbitMQ
+
+**Management UI**: http://localhost:15672
+
+**Credenciais:**
+- Username: `loomi_user`
+- Password: `loomi_password`
+
+**AMQP URL**: `amqp://loomi_user:loomi_password@localhost:5672`
+
+### Recursos da Management UI
+
+- 📊 Ver filas e exchanges
+- 📈 Monitorar mensagens em tempo real
+- 👥 Gerenciar usuários e permissões
+- ⚡ Ver estatísticas de performance
+- 🔍 Inspecionar mensagens
+- 🎯 Publicar mensagens manualmente
+
+### Como Usar
+
+A variável de ambiente `RABBITMQ_URL` já está configurada para ambas as aplicações. Para integrar com RabbitMQ, instale o pacote:
+
+```bash
+npm install @nestjs/microservices amqplib
+```
+
+Exemplo de uso futuro:
+```typescript
+// Para ser implementado
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+const client = ClientProxyFactory.create({
+  transport: Transport.RMQ,
+  options: {
+    urls: [process.env.RABBITMQ_URL],
+    queue: 'transactions_queue',
+  },
+});
 ```
 
 ## Executar as Aplicações
@@ -383,18 +547,68 @@ $ npm run test:e2e:transactions
 $ npm run test:cov
 ```
 
-## Deployment
+## 📖 Documentação Completa
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Este projeto possui documentação extensiva para facilitar o desenvolvimento e manutenção:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Documento | Descrição |
+|-----------|-----------|
+| **README.md** | Documentação principal do projeto (este arquivo) |
+| **QUICK_REFERENCE.md** | Referência rápida de todos os comandos |
+| **DOCKER.md** | Guia completo de Docker e containerização |
+| **PROJECT_SUMMARY.md** | Resumo do projeto, arquitetura e tecnologias |
+| **TRANSACTIONS_API.md** | Documentação detalhada do endpoint POST transactions |
+| **TRANSACTIONS_GET_API.md** | Documentação dos endpoints GET transactions |
+| **Makefile** | Comandos Make (`make help` para ver todos) |
+| **scripts/setup.sh** | Script de setup automático |
+
+### Arquivos de Teste HTTP
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `apps/clients/src/users/users.http` | Testes da API de usuários |
+| `apps/transactions/src/transactions/transactions.http` | Testes da API de transações |
+
+💡 Use a extensão **REST Client** do VSCode para executar as requisições diretamente no editor.
+
+## 🚀 Deployment
+
+### Com Docker (Recomendado)
+
+O projeto está totalmente containerizado e pronto para deploy:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Build e iniciar todos os serviços
+docker-compose up --build -d
+
+# Aplicar migrações
+docker-compose exec clients-app npx prisma migrate deploy
+
+# Verificar status
+docker-compose ps
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Plataformas Sugeridas
+
+- **Docker Swarm**: Orquestração simples
+- **Kubernetes**: Orquestração avançada
+- **AWS ECS**: Elastic Container Service
+- **Google Cloud Run**: Serverless containers
+- **Azure Container Instances**: Containers gerenciados
+- **DigitalOcean App Platform**: Deploy simplificado
+
+### Checklist de Produção
+
+- [ ] Configurar variáveis de ambiente
+- [ ] Aplicar migrações do banco
+- [ ] Configurar resource limits
+- [ ] Implementar logging estruturado
+- [ ] Configurar monitoramento
+- [ ] Implementar rate limiting
+- [ ] Configurar CORS
+- [ ] Adicionar autenticação
+- [ ] Configurar SSL/TLS
+- [ ] Implementar backup de dados
 
 ## Resources
 
