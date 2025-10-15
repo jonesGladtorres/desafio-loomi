@@ -41,7 +41,22 @@ desafio-loomi-nestjs/
 │       ├── src/
 │       ├── test/
 │       └── tsconfig.app.json
+├── libs/
+│   └── prisma/            # Biblioteca compartilhada do Prisma
+│       └── src/
+│           ├── prisma.module.ts
+│           ├── prisma.service.ts
+│           └── index.ts
+├── prisma/
+│   ├── migrations/        # Migrações do banco de dados
+│   │   └── 20241015030242_init/
+│   │       └── migration.sql
+│   └── schema.prisma      # Schema do Prisma com modelos User e Transaction
+├── docker-compose.yml     # Configuração do PostgreSQL e Redis
+├── .env                   # Variáveis de ambiente (não versionado)
+├── .env.example           # Template de variáveis de ambiente
 ├── nest-cli.json          # Configuração do monorepo
+├── CACHE.md               # Documentação do sistema de cache
 └── package.json
 ```
 
@@ -49,6 +64,159 @@ desafio-loomi-nestjs/
 
 ```bash
 $ npm install
+```
+
+## Configuração do Banco de Dados
+
+Este projeto usa Prisma ORM com PostgreSQL. Siga os passos abaixo para configurar:
+
+### 1. Inicie o banco de dados PostgreSQL
+
+O projeto inclui um `docker-compose.yml` para facilitar a configuração do PostgreSQL:
+
+```bash
+# Inicie o PostgreSQL usando Docker Compose
+$ npm run db:up
+# ou
+$ docker-compose up -d
+
+# Verifique se o container está rodando
+$ docker-compose ps
+
+# Para parar o banco de dados
+$ npm run db:down
+
+# Para resetar o banco (apaga todos os dados)
+$ npm run db:reset
+```
+
+**Credenciais do banco (já configuradas no .env):**
+- **Host**: localhost
+- **Port**: 5432
+- **Database**: loomi_db
+- **User**: loomi_user
+- **Password**: loomi_password
+
+**Redis (Cache):**
+- **Host**: localhost
+- **Port**: 6379
+
+### 2. Execute as migrações do Prisma
+
+```bash
+# Aplica as migrações existentes ao banco de dados
+$ npm run prisma:migrate:deploy
+
+# Ou cria uma nova migração (desenvolvimento)
+$ npm run prisma:migrate
+```
+
+### 3. Gere o Prisma Client
+
+```bash
+$ npm run prisma:generate
+```
+
+### 4. (Opcional) Visualize os dados
+
+```bash
+# Abre o Prisma Studio no navegador
+$ npm run prisma:studio
+```
+
+### Modelos do Banco de Dados
+
+O projeto possui dois modelos principais:
+
+- **User**: Modelo para gerenciamento de clientes
+  - Campos: id, name, email, cpf, phone, address, city, state, zipCode, createdAt, updatedAt
+  
+- **Transaction**: Modelo para gerenciamento de transações
+  - Campos: id, amount, type, description, status, userId, createdAt, updatedAt
+  - Relacionamento: Cada transação pertence a um usuário
+
+### Comandos úteis do Prisma
+
+```bash
+# Abre o Prisma Studio (interface visual do banco)
+$ npm run prisma:studio
+
+# Formata o schema
+$ npm run prisma:format
+
+# Gera o Prisma Client
+$ npm run prisma:generate
+
+# Valida o schema
+$ npx prisma validate
+```
+
+## Biblioteca Prisma Compartilhada
+
+O projeto possui uma biblioteca compartilhada (`@app/prisma`) que contém o `PrismaService` e `PrismaModule`. Esta biblioteca pode ser usada por ambas as aplicações (clients e transactions).
+
+### Como usar o PrismaService
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@app/prisma';
+
+@Injectable()
+export class YourService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll() {
+    // Acesse os modelos diretamente através do PrismaService
+    return this.prisma.user.findMany();
+  }
+}
+```
+
+### Configuração do Prisma Client
+
+O Prisma Client está configurado para ser gerado em `node_modules/@prisma/client`, garantindo que ambas as aplicações do monorepo possam acessá-lo sem problemas. Após qualquer alteração no `schema.prisma`, execute:
+
+```bash
+$ npx prisma generate
+```
+
+## Sistema de Cache com Redis
+
+O app **clients** está configurado com cache usando Redis para melhorar a performance das consultas.
+
+### Características do Cache
+
+- ✅ **Cache Global**: Configurado no `CacheModule` como global
+- ✅ **TTL**: 60 segundos (configurável)
+- ✅ **Invalidação Automática**: Cache é invalidado automaticamente ao criar, atualizar ou deletar usuários
+- ✅ **Endpoints Cacheados**: GET `/api/users` e GET `/api/users/:id`
+
+### Como Funciona
+
+1. **GET `/api/users`** - A primeira requisição busca do banco e armazena no cache. Requisições subsequentes retornam do cache até o TTL expirar ou o cache ser invalidado.
+
+2. **GET `/api/users/:id`** - Similar ao endpoint acima, mas cacheia usuários individualmente.
+
+3. **PATCH `/api/users/:id`** - Ao atualizar um usuário, o cache desse usuário específico e da lista de usuários é invalidado automaticamente.
+
+4. **POST `/api/users`** - Ao criar um usuário, o cache da lista de usuários é invalidado.
+
+5. **DELETE `/api/users/:id`** - Ao deletar um usuário, o cache desse usuário e da lista é invalidado.
+
+### Verificar Status do Cache
+
+```bash
+# Conectar ao Redis CLI
+docker exec -it loomi-redis redis-cli
+
+# Ver todas as chaves em cache
+KEYS *
+
+# Ver uma chave específica
+GET "/api/users"
+
+# Limpar todo o cache
+FLUSHALL
 ```
 
 ## Executar as Aplicações
@@ -68,6 +236,53 @@ $ npm run start:clients:debug
 # produção
 $ npm run start:clients:prod
 ```
+
+#### Endpoints disponíveis:
+
+- **GET** `/api/users` - Lista todos os usuários
+- **GET** `/api/users/:id` - Busca um usuário por ID
+- **POST** `/api/users` - Cria um novo usuário
+- **PATCH** `/api/users/:id` - Atualiza um usuário
+- **DELETE** `/api/users/:id` - Remove um usuário
+
+**Exemplo de uso:**
+
+```bash
+# Criar um usuário
+curl -X POST http://localhost:3001/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "cpf": "123.456.789-00",
+    "phone": "(11) 98765-4321"
+  }'
+
+# Buscar usuário por ID
+curl http://localhost:3001/api/users/{userId}
+
+# Listar todos os usuários
+curl http://localhost:3001/api/users
+
+# Atualizar um usuário (atualização parcial)
+curl -X PATCH http://localhost:3001/api/users/{userId} \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva Atualizado",
+    "phone": "(11) 91234-5678"
+  }'
+
+# Deletar um usuário
+curl -X DELETE http://localhost:3001/api/users/{userId}
+```
+
+💡 **Dica:** Use o arquivo `apps/clients/src/users/users.http` com a extensão REST Client do VSCode para testar os endpoints.
+
+📖 **Documentação completa:** 
+- `USAGE_EXAMPLES.md` - Exemplos detalhados de uso da API
+- `CACHE.md` - Documentação completa do sistema de cache com Redis
+
+⚡ **Cache**: Os endpoints GET estão otimizados com Redis para melhor performance!
 
 ### Aplicação Transactions (Porta 3002)
 
