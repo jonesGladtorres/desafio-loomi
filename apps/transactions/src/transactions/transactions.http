@@ -1,0 +1,210 @@
+### Arquivo de teste para a API de Transações
+### Use com REST Client (VSCode Extension) ou ferramentas como Postman/Insomnia
+###
+### VALIDAÇÕES:
+### - amount: número positivo com no máximo 2 casas decimais
+### - type: deve ser 'credit', 'debit' ou 'transfer'
+### - status: deve ser 'pending', 'completed', 'failed' ou 'cancelled'
+### - userId: deve ser um UUID válido de um usuário existente
+### - description: opcional
+
+@baseUrl = http://localhost:3002
+@contentType = application/json
+
+### Criar uma nova transação (crédito)
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 150.50,
+  "type": "credit",
+  "description": "Pagamento recebido",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Criar outra transação (débito)
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 75.00,
+  "type": "debit",
+  "description": "Compra online",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Buscar todas as transações
+GET {{baseUrl}}/api/transactions
+
+### ============================================
+### GET /api/transactions/{transactionId}
+### Buscar transação específica por ID
+### ============================================
+
+### Buscar transação por ID
+# Substitua {transactionId} por um ID válido de transação
+# Exemplo: GET {{baseUrl}}/api/transactions/987e6543-e21b-12d3-a456-426614174999
+GET {{baseUrl}}/api/transactions/{transactionId}
+
+### ============================================
+### GET /api/transactions/user/{userId}
+### Buscar todas as transações de um usuário
+### ============================================
+
+### Buscar transações de um usuário específico
+# Substitua {userId} por um ID válido de usuário
+# Exemplo: GET {{baseUrl}}/api/transactions/user/123e4567-e89b-12d3-a456-426614174000
+GET {{baseUrl}}/api/transactions/user/{userId}
+
+### Buscar transações de um usuário (exemplo com ID real)
+# Use um ID de usuário que você criou anteriormente
+GET {{baseUrl}}/api/transactions/user/substitua-por-um-id-valido
+
+### Atualizar uma transação (atualização parcial)
+# Substitua {transactionId} por um ID válido
+PATCH {{baseUrl}}/api/transactions/{transactionId}
+Content-Type: {{contentType}}
+
+{
+  "status": "cancelled",
+  "description": "Transação cancelada pelo usuário"
+}
+
+### Atualizar apenas o status
+# Substitua {transactionId} por um ID válido
+PATCH {{baseUrl}}/api/transactions/{transactionId}
+Content-Type: {{contentType}}
+
+{
+  "status": "pending"
+}
+
+### Deletar uma transação
+# Substitua {transactionId} por um ID válido
+DELETE {{baseUrl}}/api/transactions/{transactionId}
+
+### ============================================
+### EXEMPLOS DE TESTE COMPLETO
+### ============================================
+
+### Teste 1: Criar transação de crédito
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 500.00,
+  "type": "credit",
+  "description": "Salário mensal",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Teste 2: Criar transação de transferência
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 200.00,
+  "type": "transfer",
+  "description": "Transferência para poupança",
+  "status": "pending",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Teste 3: Buscar transação específica por ID
+GET {{baseUrl}}/api/transactions/substitua-por-um-id-de-transacao-valido
+
+### Teste 4: Buscar transações de um usuário específico
+GET {{baseUrl}}/api/transactions/user/substitua-por-um-id-de-usuario-valido
+
+### ============================================
+### TESTES DE VALIDAÇÃO (devem retornar erro)
+### ============================================
+
+### Erro: Valor negativo
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": -50.00,
+  "type": "credit",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Erro: Tipo inválido
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "invalid_type",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Erro: Status inválido
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "status": "invalid_status",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Erro: UUID inválido
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "status": "completed",
+  "userId": "not-a-valid-uuid"
+}
+
+### Erro: Usuário não existe
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "status": "completed",
+  "userId": "00000000-0000-0000-0000-000000000000"
+}
+
+### Erro: Campo obrigatório faltando (amount)
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "type": "credit",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### ============================================
+### TESTES DE ERRO - ENDPOINTS GET
+### ============================================
+
+### Erro: Transação não encontrada (GET /:id)
+# Deve retornar 404 Not Found
+GET {{baseUrl}}/api/transactions/00000000-0000-0000-0000-000000000000
+
+### Erro: ID de transação inválido (GET /:id)
+# UUID inválido - pode retornar 500 ou 400 dependendo do Prisma
+GET {{baseUrl}}/api/transactions/invalid-uuid
+
+### Erro: Usuário não encontrado (GET /user/:userId)
+# Deve retornar 404 Not Found
+GET {{baseUrl}}/api/transactions/user/00000000-0000-0000-0000-000000000000
+
+### Erro: ID de usuário inválido (GET /user/:userId)
+# UUID inválido - pode retornar 500 ou 400 dependendo do Prisma
+GET {{baseUrl}}/api/transactions/user/invalid-uuid
+

@@ -300,6 +300,62 @@ $ npm run start:transactions:debug
 $ npm run start:transactions:prod
 ```
 
+#### Endpoints disponíveis:
+
+- **POST** `/api/transactions` - Cria uma nova transação
+- **GET** `/api/transactions` - Lista todas as transações
+- **GET** `/api/transactions/:transactionId` - Busca uma transação específica por ID
+- **GET** `/api/transactions/user/:userId` - Lista todas as transações de um usuário
+- **PATCH** `/api/transactions/:id` - Atualiza uma transação
+- **DELETE** `/api/transactions/:id` - Remove uma transação
+
+**Campos do CreateTransactionDto:**
+
+| Campo | Tipo | Validação | Obrigatório |
+|-------|------|-----------|-------------|
+| amount | number | Positivo, máx 2 decimais | Sim |
+| type | string | 'credit', 'debit' ou 'transfer' | Sim |
+| description | string | - | Não |
+| status | string | 'pending', 'completed', 'failed' ou 'cancelled' | Sim |
+| userId | string | UUID válido de usuário existente | Sim |
+
+**Exemplo de uso:**
+
+```bash
+# Criar uma transação
+curl -X POST http://localhost:3002/api/transactions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 150.50,
+    "type": "credit",
+    "description": "Pagamento recebido",
+    "status": "completed",
+    "userId": "user-id-aqui"
+  }'
+
+# Listar todas as transações
+curl http://localhost:3002/api/transactions
+
+# Buscar transação específica por ID
+curl http://localhost:3002/api/transactions/{transactionId}
+
+# Listar todas as transações de um usuário
+curl http://localhost:3002/api/transactions/user/{userId}
+
+# Atualizar status de uma transação
+curl -X PATCH http://localhost:3002/api/transactions/{transactionId} \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "cancelled"
+  }'
+```
+
+💡 **Dica:** Use o arquivo `apps/transactions/src/transactions/transactions.http` com a extensão REST Client do VSCode para testar os endpoints.
+
+📖 **Documentação completa da API de Transações:** 
+- `TRANSACTIONS_API.md` - Documentação do endpoint POST com validações
+- `TRANSACTIONS_GET_API.md` - Documentação dos endpoints GET com exemplos detalhados
+
 ## Build das Aplicações
 
 ```bash
