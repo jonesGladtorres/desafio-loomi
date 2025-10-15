@@ -300,6 +300,48 @@ $ npm run start:transactions:debug
 $ npm run start:transactions:prod
 ```
 
+#### Endpoints disponíveis:
+
+- **GET** `/api/transactions` - Lista todas as transações
+- **GET** `/api/transactions?userId={userId}` - Lista transações de um usuário específico
+- **GET** `/api/transactions/:id` - Busca uma transação por ID
+- **POST** `/api/transactions` - Cria uma nova transação
+- **PATCH** `/api/transactions/:id` - Atualiza uma transação
+- **DELETE** `/api/transactions/:id` - Remove uma transação
+
+**Exemplo de uso:**
+
+```bash
+# Criar uma transação
+curl -X POST http://localhost:3002/api/transactions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 150.50,
+    "type": "credit",
+    "description": "Pagamento recebido",
+    "status": "completed",
+    "userId": "user-id-aqui"
+  }'
+
+# Buscar transação por ID
+curl http://localhost:3002/api/transactions/{transactionId}
+
+# Listar todas as transações
+curl http://localhost:3002/api/transactions
+
+# Listar transações de um usuário
+curl http://localhost:3002/api/transactions?userId={userId}
+
+# Atualizar status de uma transação
+curl -X PATCH http://localhost:3002/api/transactions/{transactionId} \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "cancelled"
+  }'
+```
+
+💡 **Dica:** Use o arquivo `apps/transactions/src/transactions/transactions.http` com a extensão REST Client do VSCode para testar os endpoints.
+
 ## Build das Aplicações
 
 ```bash

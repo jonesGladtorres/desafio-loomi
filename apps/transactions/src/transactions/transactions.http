@@ -1,0 +1,95 @@
+### Arquivo de teste para a API de Transações
+### Use com REST Client (VSCode Extension) ou ferramentas como Postman/Insomnia
+
+@baseUrl = http://localhost:3002
+@contentType = application/json
+
+### Criar uma nova transação
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 150.50,
+  "type": "credit",
+  "description": "Pagamento recebido",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Criar outra transação (débito)
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 75.00,
+  "type": "debit",
+  "description": "Compra online",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Buscar todas as transações
+GET {{baseUrl}}/api/transactions
+
+### Buscar transações de um usuário específico
+# Substitua {userId} por um ID válido
+GET {{baseUrl}}/api/transactions?userId={userId}
+
+### Buscar transação por ID
+# Substitua {transactionId} por um ID válido
+GET {{baseUrl}}/api/transactions/{transactionId}
+
+### Atualizar uma transação (atualização parcial)
+# Substitua {transactionId} por um ID válido
+PATCH {{baseUrl}}/api/transactions/{transactionId}
+Content-Type: {{contentType}}
+
+{
+  "status": "cancelled",
+  "description": "Transação cancelada pelo usuário"
+}
+
+### Atualizar apenas o status
+# Substitua {transactionId} por um ID válido
+PATCH {{baseUrl}}/api/transactions/{transactionId}
+Content-Type: {{contentType}}
+
+{
+  "status": "pending"
+}
+
+### Deletar uma transação
+# Substitua {transactionId} por um ID válido
+DELETE {{baseUrl}}/api/transactions/{transactionId}
+
+### ============================================
+### EXEMPLOS DE TESTE COMPLETO
+### ============================================
+
+### Teste 1: Criar transação de crédito
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 500.00,
+  "type": "credit",
+  "description": "Salário mensal",
+  "status": "completed",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Teste 2: Criar transação de transferência
+POST {{baseUrl}}/api/transactions
+Content-Type: {{contentType}}
+
+{
+  "amount": 200.00,
+  "type": "transfer",
+  "description": "Transferência para poupança",
+  "status": "pending",
+  "userId": "substitua-por-um-id-valido"
+}
+
+### Teste 3: Buscar todas as transações de um usuário
+GET {{baseUrl}}/api/transactions?userId=substitua-por-um-id-valido
+
