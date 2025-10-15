@@ -407,6 +407,43 @@ curl -X PATCH http://localhost:3001/api/users/{userId} \
 
 🐰 **RabbitMQ**: Atualizações de usuário disparam eventos assíncronos para o app transactions!
 
+## 📚 Documentação Swagger/OpenAPI
+
+Ambas as aplicações possuem documentação interativa automática usando Swagger.
+
+### Acesso à Documentação
+
+| Aplicação | URL | Descrição |
+|-----------|-----|-----------|
+| **Clients API** | http://localhost:3001/api/docs | Documentação da API de usuários |
+| **Transactions API** | http://localhost:3002/api/docs | Documentação da API de transações |
+
+### Recursos
+
+- ✅ **Interface Interativa**: Teste endpoints diretamente no navegador
+- ✅ **Schemas Completos**: Visualize estrutura de DTOs com validações
+- ✅ **Exemplos Prontos**: Payloads pré-preenchidos para testes
+- ✅ **Códigos HTTP**: Todos os status codes documentados
+- ✅ **Try it Out**: Execute requisições sem Postman/cURL
+- ✅ **Export Spec**: Baixe OpenAPI JSON/YAML
+
+### Como Usar
+
+```bash
+# 1. Iniciar aplicação
+npm run start:clients:dev
+
+# 2. Acessar Swagger no navegador
+open http://localhost:3001/api/docs
+
+# 3. Expandir endpoint desejado
+# 4. Clicar em "Try it out"
+# 5. Executar requisição
+# 6. Ver resposta
+```
+
+📖 **Documentação completa do Swagger:** Veja `SWAGGER.md` para guia detalhado, exemplos e integrações.
+
 ## Executar as Aplicações
 
 ### Aplicação Clients (Porta 3001)
@@ -424,6 +461,8 @@ $ npm run start:clients:debug
 # produção
 $ npm run start:clients:prod
 ```
+
+**📚 Swagger UI:** http://localhost:3001/api/docs
 
 #### Endpoints disponíveis:
 
@@ -488,6 +527,8 @@ $ npm run start:transactions:debug
 # produção
 $ npm run start:transactions:prod
 ```
+
+**📚 Swagger UI:** http://localhost:3002/api/docs
 
 #### Endpoints disponíveis:
 
@@ -582,6 +623,7 @@ Este projeto possui documentação extensiva para facilitar o desenvolvimento e 
 | **QUICK_REFERENCE.md** | Referência rápida de todos os comandos |
 | **DOCKER.md** | Guia completo de Docker e containerização |
 | **PROJECT_SUMMARY.md** | Resumo do projeto, arquitetura e tecnologias |
+| **SWAGGER.md** | Guia completo do Swagger/OpenAPI (documentação automática) |
 | **RABBITMQ_INTEGRATION.md** | Integração RabbitMQ entre apps (arquitetura e implementação) |
 | **TESTE_RABBITMQ.md** | Guia passo a passo para testar eventos RabbitMQ |
 | **TRANSACTIONS_API.md** | Documentação detalhada do endpoint POST transactions |

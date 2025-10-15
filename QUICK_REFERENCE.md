@@ -175,7 +175,9 @@ npm run setup
 - `QUICK_REFERENCE.md` - Referência rápida de comandos (este arquivo)
 - `PROJECT_SUMMARY.md` - Resumo executivo do projeto
 - `DOCKER.md` - Guia completo do Docker
+- `SWAGGER.md` - Documentação Swagger/OpenAPI
 - `RABBITMQ_INTEGRATION.md` - Integração RabbitMQ entre apps
+- `TESTE_RABBITMQ.md` - Guia de testes RabbitMQ
 - `TRANSACTIONS_API.md` - API de transações (POST)
 - `TRANSACTIONS_GET_API.md` - API de transações (GET)
 - `apps/clients/src/users/users.http` - Testes API Users
@@ -186,7 +188,9 @@ npm run setup
 | Serviço | URL | Credenciais |
 |---------|-----|-------------|
 | Clients API | http://localhost:3001 | - |
+| Clients Swagger | http://localhost:3001/api/docs | - |
 | Transactions API | http://localhost:3002 | - |
+| Transactions Swagger | http://localhost:3002/api/docs | - |
 | Prisma Studio | http://localhost:5555 | - |
 | RabbitMQ UI | http://localhost:15672 | loomi_user / loomi_password |
 | PostgreSQL | localhost:5432 | loomi_user / loomi_password |

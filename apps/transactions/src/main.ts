@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { TransactionsModule } from './transactions.module';
 
@@ -15,6 +16,23 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Configuração do Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Loomi - Transactions API')
+    .setDescription('API para gerenciamento de transações financeiras')
+    .setVersion('1.0')
+    .addTag('transactions', 'Endpoints relacionados a transações financeiras')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
 
   // Conecta o microservice RabbitMQ (modo híbrido)
   app.connectMicroservice<MicroserviceOptions>({
@@ -38,5 +56,6 @@ async function bootstrap() {
   // Inicia o servidor HTTP
   await app.listen(process.env.port ?? 3002);
   console.log(`🚀 Transactions app is running on: http://localhost:3002`);
+  console.log(`📚 Swagger docs available at: http://localhost:3002/api/docs`);
 }
 bootstrap();

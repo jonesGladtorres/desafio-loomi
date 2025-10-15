@@ -356,13 +356,15 @@ npm run build                    # Build tudo
 
 ## 📊 Estatísticas do Projeto
 
-- **Aplicações**: 2
-- **Endpoints**: 12 (6 por app)
-- **Modelos**: 2 (User, Transaction)
-- **Serviços Docker**: 5
-- **Bibliotecas Compartilhadas**: 1
-- **Arquivos de Documentação**: 6
-- **Scripts NPM**: 40+
+- **Aplicações**: 2 (Clients, Transactions)
+- **Endpoints HTTP**: 11
+- **Event Patterns**: 1 (RabbitMQ)
+- **Modelos Prisma**: 2 (User, Transaction)
+- **Serviços Docker**: 5 (Postgres, Redis, RabbitMQ, 2 apps)
+- **Bibliotecas Compartilhadas**: 1 (@app/prisma)
+- **Arquivos de Documentação**: 9
+- **Scripts NPM**: 45+
+- **Swagger UIs**: 2 (uma por app)
 
 ## ✅ Checklist de Funcionalidades
 
@@ -404,6 +406,7 @@ npm run build                    # Build tudo
 - [x] Guia Docker
 - [x] Referência rápida
 - [x] Documentação de APIs
+- [x] Swagger/OpenAPI em ambas as APIs
 - [x] Arquivos HTTP de teste
 - [x] Scripts de setup
 
