@@ -32,7 +32,7 @@ const clients_controller_1 = __webpack_require__(5);
 const clients_service_1 = __webpack_require__(6);
 const prisma_1 = __webpack_require__(7);
 const users_module_1 = __webpack_require__(11);
-const redisStore = __webpack_require__(18);
+const redisStore = __webpack_require__(19);
 let ClientsModule = class ClientsModule {
 };
 exports.ClientsModule = ClientsModule;
@@ -246,13 +246,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersModule = void 0;
 const common_1 = __webpack_require__(2);
-const users_service_1 = __webpack_require__(12);
-const users_controller_1 = __webpack_require__(13);
+const microservices_1 = __webpack_require__(12);
+const users_service_1 = __webpack_require__(13);
+const users_controller_1 = __webpack_require__(14);
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            microservices_1.ClientsModule.register([
+                {
+                    name: 'RABBITMQ_SERVICE',
+                    transport: microservices_1.Transport.RMQ,
+                    options: {
+                        urls: [process.env.RABBITMQ_URL || 'amqp://loomi_user:loomi_password@localhost:5672'],
+                        queue: 'user_events_queue',
+                        queueOptions: {
+                            durable: true,
+                        },
+                    },
+                },
+            ]),
+        ],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService],
     })
@@ -261,6 +277,12 @@ exports.UsersModule = UsersModule = __decorate([
 
 /***/ }),
 /* 12 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/microservices");
+
+/***/ }),
+/* 13 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -273,15 +295,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a;
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersService = void 0;
 const common_1 = __webpack_require__(2);
+const microservices_1 = __webpack_require__(12);
 const prisma_1 = __webpack_require__(7);
 let UsersService = class UsersService {
     prisma;
-    constructor(prisma) {
+    rabbitClient;
+    constructor(prisma, rabbitClient) {
         this.prisma = prisma;
+        this.rabbitClient = rabbitClient;
     }
     async create(createUserDto) {
         return this.prisma.user.create({
@@ -308,14 +336,27 @@ let UsersService = class UsersService {
         return user;
     }
     async update(id, updateUserDto) {
-        await this.findOne(id);
-        return this.prisma.user.update({
+        const existingUser = await this.findOne(id);
+        const updatedUser = await this.prisma.user.update({
             where: { id },
             data: updateUserDto,
             include: {
                 transactions: true,
             },
         });
+        const bankingFieldsUpdated = this.checkBankingFieldsUpdated(updateUserDto);
+        if (bankingFieldsUpdated) {
+            this.rabbitClient.emit('user_banking_updated', {
+                userId: updatedUser.id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                cpf: updatedUser.cpf,
+                updatedFields: Object.keys(updateUserDto),
+                timestamp: new Date().toISOString(),
+            });
+            console.log(`📤 Evento 'user_banking_updated' emitido para o usuário ${updatedUser.id}`);
+        }
+        return updatedUser;
     }
     async remove(id) {
         await this.findOne(id);
@@ -323,16 +364,21 @@ let UsersService = class UsersService {
             where: { id },
         });
     }
+    checkBankingFieldsUpdated(updateUserDto) {
+        const bankingFields = ['name', 'email', 'cpf', 'phone', 'address', 'city', 'state', 'zipCode'];
+        return bankingFields.some(field => updateUserDto[field] !== undefined);
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof prisma_1.PrismaService !== "undefined" && prisma_1.PrismaService) === "function" ? _a : Object])
+    __param(1, (0, common_1.Inject)('RABBITMQ_SERVICE')),
+    __metadata("design:paramtypes", [typeof (_a = typeof prisma_1.PrismaService !== "undefined" && prisma_1.PrismaService) === "function" ? _a : Object, typeof (_b = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _b : Object])
 ], UsersService);
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -353,10 +399,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersController = void 0;
 const common_1 = __webpack_require__(2);
 const cache_manager_1 = __webpack_require__(4);
-const cache_manager_2 = __webpack_require__(14);
-const users_service_1 = __webpack_require__(12);
-const create_user_dto_1 = __webpack_require__(15);
-const update_user_dto_1 = __webpack_require__(17);
+const cache_manager_2 = __webpack_require__(15);
+const users_service_1 = __webpack_require__(13);
+const create_user_dto_1 = __webpack_require__(16);
+const update_user_dto_1 = __webpack_require__(18);
 let UsersController = class UsersController {
     usersService;
     cacheManager;
@@ -434,13 +480,13 @@ exports.UsersController = UsersController = __decorate([
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ ((module) => {
 
 module.exports = require("cache-manager");
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -455,7 +501,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CreateUserDto = void 0;
-const class_validator_1 = __webpack_require__(16);
+const class_validator_1 = __webpack_require__(17);
 class CreateUserDto {
     name;
     email;
@@ -510,13 +556,13 @@ __decorate([
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ ((module) => {
 
 module.exports = require("class-validator");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -531,7 +577,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateUserDto = void 0;
-const class_validator_1 = __webpack_require__(16);
+const class_validator_1 = __webpack_require__(17);
 class UpdateUserDto {
     name;
     email;
@@ -586,7 +632,7 @@ __decorate([
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ ((module) => {
 
 module.exports = require("cache-manager-redis-store");

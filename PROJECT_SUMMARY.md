@@ -371,6 +371,7 @@ npm run build                    # Build tudo
 - [x] PostgreSQL com Prisma ORM
 - [x] Redis para cache
 - [x] RabbitMQ como message broker
+- [x] Comunicação assíncrona via eventos
 - [x] Docker e Docker Compose
 - [x] Multi-stage builds
 - [x] Health checks
@@ -381,6 +382,8 @@ npm run build                    # Build tudo
 - [x] Validação de DTOs
 - [x] Tratamento de erros
 - [x] Relacionamento com transações
+- [x] Producer de eventos RabbitMQ
+- [x] Emite evento ao atualizar dados bancários
 
 ### Transactions App
 - [x] CRUD de transações
@@ -388,6 +391,8 @@ npm run build                    # Build tudo
 - [x] Verificação de integridade referencial
 - [x] Busca por usuário
 - [x] Ordenação otimizada
+- [x] Consumer de eventos RabbitMQ
+- [x] Modo híbrido HTTP + Message-based
 
 ### Biblioteca Compartilhada
 - [x] PrismaModule global

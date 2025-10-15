@@ -172,7 +172,10 @@ npm run setup
 ## 📚 Documentação
 
 - `README.md` - Documentação principal
+- `QUICK_REFERENCE.md` - Referência rápida de comandos (este arquivo)
+- `PROJECT_SUMMARY.md` - Resumo executivo do projeto
 - `DOCKER.md` - Guia completo do Docker
+- `RABBITMQ_INTEGRATION.md` - Integração RabbitMQ entre apps
 - `TRANSACTIONS_API.md` - API de transações (POST)
 - `TRANSACTIONS_GET_API.md` - API de transações (GET)
 - `apps/clients/src/users/users.http` - Testes API Users

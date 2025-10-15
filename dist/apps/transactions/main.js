@@ -15,6 +15,12 @@ module.exports = require("@nestjs/common");
 
 /***/ }),
 /* 3 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/microservices");
+
+/***/ }),
+/* 4 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -27,10 +33,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TransactionsModule = void 0;
 const common_1 = __webpack_require__(2);
-const transactions_controller_1 = __webpack_require__(4);
-const transactions_service_1 = __webpack_require__(5);
-const prisma_1 = __webpack_require__(6);
-const transactions_module_1 = __webpack_require__(10);
+const transactions_controller_1 = __webpack_require__(5);
+const transactions_service_1 = __webpack_require__(6);
+const prisma_1 = __webpack_require__(7);
+const transactions_module_1 = __webpack_require__(11);
 let TransactionsModule = class TransactionsModule {
 };
 exports.TransactionsModule = TransactionsModule;
@@ -44,7 +50,7 @@ exports.TransactionsModule = TransactionsModule = __decorate([
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -61,7 +67,7 @@ var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TransactionsController = void 0;
 const common_1 = __webpack_require__(2);
-const transactions_service_1 = __webpack_require__(5);
+const transactions_service_1 = __webpack_require__(6);
 let TransactionsController = class TransactionsController {
     transactionsService;
     constructor(transactionsService) {
@@ -85,7 +91,7 @@ exports.TransactionsController = TransactionsController = __decorate([
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -102,7 +108,7 @@ var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TransactionsService = void 0;
 const common_1 = __webpack_require__(2);
-const prisma_1 = __webpack_require__(6);
+const prisma_1 = __webpack_require__(7);
 let TransactionsService = class TransactionsService {
     prisma;
     constructor(prisma) {
@@ -131,7 +137,7 @@ exports.TransactionsService = TransactionsService = __decorate([
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -150,35 +156,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(7), exports);
 __exportStar(__webpack_require__(8), exports);
-
-
-/***/ }),
-/* 7 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PrismaModule = void 0;
-const common_1 = __webpack_require__(2);
-const prisma_service_1 = __webpack_require__(8);
-let PrismaModule = class PrismaModule {
-};
-exports.PrismaModule = PrismaModule;
-exports.PrismaModule = PrismaModule = __decorate([
-    (0, common_1.Global)(),
-    (0, common_1.Module)({
-        providers: [prisma_service_1.PrismaService],
-        exports: [prisma_service_1.PrismaService],
-    })
-], PrismaModule);
+__exportStar(__webpack_require__(9), exports);
 
 
 /***/ }),
@@ -193,9 +172,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PrismaModule = void 0;
+const common_1 = __webpack_require__(2);
+const prisma_service_1 = __webpack_require__(9);
+let PrismaModule = class PrismaModule {
+};
+exports.PrismaModule = PrismaModule;
+exports.PrismaModule = PrismaModule = __decorate([
+    (0, common_1.Global)(),
+    (0, common_1.Module)({
+        providers: [prisma_service_1.PrismaService],
+        exports: [prisma_service_1.PrismaService],
+    })
+], PrismaModule);
+
+
+/***/ }),
+/* 9 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PrismaService = void 0;
 const common_1 = __webpack_require__(2);
-const client_1 = __webpack_require__(9);
+const client_1 = __webpack_require__(10);
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     async onModuleInit() {
         await this.$connect();
@@ -211,13 +217,13 @@ exports.PrismaService = PrismaService = __decorate([
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ ((module) => {
 
 module.exports = require("@prisma/client");
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -230,8 +236,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TransactionsResourceModule = void 0;
 const common_1 = __webpack_require__(2);
-const transactions_service_1 = __webpack_require__(11);
-const transactions_controller_1 = __webpack_require__(12);
+const transactions_service_1 = __webpack_require__(12);
+const transactions_controller_1 = __webpack_require__(13);
 let TransactionsResourceModule = class TransactionsResourceModule {
 };
 exports.TransactionsResourceModule = TransactionsResourceModule;
@@ -245,7 +251,7 @@ exports.TransactionsResourceModule = TransactionsResourceModule = __decorate([
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -262,7 +268,7 @@ var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TransactionsService = void 0;
 const common_1 = __webpack_require__(2);
-const prisma_1 = __webpack_require__(6);
+const prisma_1 = __webpack_require__(7);
 let TransactionsService = class TransactionsService {
     prisma;
     constructor(prisma) {
@@ -346,7 +352,7 @@ exports.TransactionsService = TransactionsService = __decorate([
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -366,9 +372,10 @@ var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TransactionsController = void 0;
 const common_1 = __webpack_require__(2);
-const transactions_service_1 = __webpack_require__(11);
-const create_transaction_dto_1 = __webpack_require__(13);
-const update_transaction_dto_1 = __webpack_require__(15);
+const microservices_1 = __webpack_require__(3);
+const transactions_service_1 = __webpack_require__(12);
+const create_transaction_dto_1 = __webpack_require__(14);
+const update_transaction_dto_1 = __webpack_require__(16);
 let TransactionsController = class TransactionsController {
     transactionsService;
     constructor(transactionsService) {
@@ -391,6 +398,24 @@ let TransactionsController = class TransactionsController {
     }
     remove(id) {
         return this.transactionsService.remove(id);
+    }
+    async handleUserBankingUpdated(data) {
+        console.log('📥 Evento recebido: user_banking_updated');
+        console.log('📋 Dados do evento:', {
+            userId: data.userId,
+            name: data.name,
+            email: data.email,
+            cpf: data.cpf,
+            updatedFields: data.updatedFields,
+            timestamp: data.timestamp,
+        });
+        try {
+            const userTransactions = await this.transactionsService.findByUserId(data.userId);
+            console.log(`✅ Usuário ${data.name} possui ${userTransactions.length} transação(ões)`);
+        }
+        catch (error) {
+            console.error('❌ Erro ao processar evento:', error.message);
+        }
     }
 };
 exports.TransactionsController = TransactionsController;
@@ -436,6 +461,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "remove", null);
+__decorate([
+    (0, microservices_1.EventPattern)('user_banking_updated'),
+    __param(0, (0, microservices_1.Payload)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TransactionsController.prototype, "handleUserBankingUpdated", null);
 exports.TransactionsController = TransactionsController = __decorate([
     (0, common_1.Controller)('api/transactions'),
     __metadata("design:paramtypes", [typeof (_a = typeof transactions_service_1.TransactionsService !== "undefined" && transactions_service_1.TransactionsService) === "function" ? _a : Object])
@@ -443,7 +475,7 @@ exports.TransactionsController = TransactionsController = __decorate([
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -458,7 +490,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CreateTransactionDto = void 0;
-const class_validator_1 = __webpack_require__(14);
+const class_validator_1 = __webpack_require__(15);
 class CreateTransactionDto {
     amount;
     type;
@@ -502,13 +534,13 @@ __decorate([
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ ((module) => {
 
 module.exports = require("class-validator");
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -523,7 +555,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateTransactionDto = void 0;
-const class_validator_1 = __webpack_require__(14);
+const class_validator_1 = __webpack_require__(15);
 class UpdateTransactionDto {
     amount;
     type;
@@ -589,7 +621,8 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(1);
 const common_1 = __webpack_require__(2);
-const transactions_module_1 = __webpack_require__(3);
+const microservices_1 = __webpack_require__(3);
+const transactions_module_1 = __webpack_require__(4);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(transactions_module_1.TransactionsModule);
     app.useGlobalPipes(new common_1.ValidationPipe({
@@ -597,6 +630,18 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
         transform: true,
     }));
+    app.connectMicroservice({
+        transport: microservices_1.Transport.RMQ,
+        options: {
+            urls: [process.env.RABBITMQ_URL || 'amqp://loomi_user:loomi_password@localhost:5672'],
+            queue: 'user_events_queue',
+            queueOptions: {
+                durable: true,
+            },
+        },
+    });
+    await app.startAllMicroservices();
+    console.log('🐰 RabbitMQ microservice is listening...');
     await app.listen(process.env.port ?? 3002);
     console.log(`🚀 Transactions app is running on: http://localhost:3002`);
 }

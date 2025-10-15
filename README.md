@@ -361,27 +361,51 @@ O projeto está configurado para usar RabbitMQ como message broker para comunica
 - 🔍 Inspecionar mensagens
 - 🎯 Publicar mensagens manualmente
 
-### Como Usar
+### Comunicação Entre Apps via RabbitMQ
 
-A variável de ambiente `RABBITMQ_URL` já está configurada para ambas as aplicações. Para integrar com RabbitMQ, instale o pacote:
+O projeto implementa **comunicação assíncrona** entre as aplicações usando RabbitMQ.
+
+#### Evento Implementado: `user_banking_updated`
+
+Quando um usuário é atualizado no app **clients**, um evento é emitido via RabbitMQ e consumido pelo app **transactions**.
+
+**Fluxo:**
+```
+1. PATCH /api/users/:id (Clients App)
+   ↓
+2. UsersService atualiza usuário
+   ↓
+3. Emite evento 'user_banking_updated' → RabbitMQ
+   ↓
+4. Transactions App recebe evento
+   ↓
+5. TransactionsController processa (@EventPattern)
+```
+
+**Como testar:**
 
 ```bash
-npm install @nestjs/microservices amqplib
+# 1. Iniciar RabbitMQ
+npm run docker:dev:up
+
+# 2. Iniciar apps
+npm run start:clients:dev        # Terminal 1
+npm run start:transactions:dev   # Terminal 2
+
+# 3. Atualizar usuário
+curl -X PATCH http://localhost:3001/api/users/{userId} \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Nome Atualizado"}'
+
+# 4. Ver logs do Transactions App
+# Deve mostrar: 📥 Evento recebido: user_banking_updated
 ```
 
-Exemplo de uso futuro:
-```typescript
-// Para ser implementado
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+📖 **Documentação completa:** 
+- `RABBITMQ_INTEGRATION.md` - Arquitetura, implementação e casos de uso
+- `TESTE_RABBITMQ.md` - Guia passo a passo para testar a integração
 
-const client = ClientProxyFactory.create({
-  transport: Transport.RMQ,
-  options: {
-    urls: [process.env.RABBITMQ_URL],
-    queue: 'transactions_queue',
-  },
-});
-```
+🐰 **RabbitMQ**: Atualizações de usuário disparam eventos assíncronos para o app transactions!
 
 ## Executar as Aplicações
 
@@ -443,10 +467,11 @@ curl -X DELETE http://localhost:3001/api/users/{userId}
 💡 **Dica:** Use o arquivo `apps/clients/src/users/users.http` com a extensão REST Client do VSCode para testar os endpoints.
 
 📖 **Documentação completa:** 
-- `USAGE_EXAMPLES.md` - Exemplos detalhados de uso da API
-- `CACHE.md` - Documentação completa do sistema de cache com Redis
+- Veja os arquivos .md na raiz do projeto para documentação detalhada
 
 ⚡ **Cache**: Os endpoints GET estão otimizados com Redis para melhor performance!
+
+🐰 **RabbitMQ**: Atualizações de usuário disparam eventos assíncronos para o app transactions!
 
 ### Aplicação Transactions (Porta 3002)
 
@@ -557,6 +582,8 @@ Este projeto possui documentação extensiva para facilitar o desenvolvimento e 
 | **QUICK_REFERENCE.md** | Referência rápida de todos os comandos |
 | **DOCKER.md** | Guia completo de Docker e containerização |
 | **PROJECT_SUMMARY.md** | Resumo do projeto, arquitetura e tecnologias |
+| **RABBITMQ_INTEGRATION.md** | Integração RabbitMQ entre apps (arquitetura e implementação) |
+| **TESTE_RABBITMQ.md** | Guia passo a passo para testar eventos RabbitMQ |
 | **TRANSACTIONS_API.md** | Documentação detalhada do endpoint POST transactions |
 | **TRANSACTIONS_GET_API.md** | Documentação dos endpoints GET transactions |
 | **Makefile** | Comandos Make (`make help` para ver todos) |
