@@ -59,6 +59,16 @@ export class TransactionsService {
   }
 
   async findByUserId(userId: string) {
+    // Verifica se o usuário existe
+    const userExists = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!userExists) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Busca as transações do usuário
     return this.prisma.transaction.findMany({
       where: { userId },
       include: {

@@ -38,13 +38,29 @@ Content-Type: {{contentType}}
 ### Buscar todas as transações
 GET {{baseUrl}}/api/transactions
 
-### Buscar transações de um usuário específico
-# Substitua {userId} por um ID válido
-GET {{baseUrl}}/api/transactions?userId={userId}
+### ============================================
+### GET /api/transactions/{transactionId}
+### Buscar transação específica por ID
+### ============================================
 
 ### Buscar transação por ID
-# Substitua {transactionId} por um ID válido
+# Substitua {transactionId} por um ID válido de transação
+# Exemplo: GET {{baseUrl}}/api/transactions/987e6543-e21b-12d3-a456-426614174999
 GET {{baseUrl}}/api/transactions/{transactionId}
+
+### ============================================
+### GET /api/transactions/user/{userId}
+### Buscar todas as transações de um usuário
+### ============================================
+
+### Buscar transações de um usuário específico
+# Substitua {userId} por um ID válido de usuário
+# Exemplo: GET {{baseUrl}}/api/transactions/user/123e4567-e89b-12d3-a456-426614174000
+GET {{baseUrl}}/api/transactions/user/{userId}
+
+### Buscar transações de um usuário (exemplo com ID real)
+# Use um ID de usuário que você criou anteriormente
+GET {{baseUrl}}/api/transactions/user/substitua-por-um-id-valido
 
 ### Atualizar uma transação (atualização parcial)
 # Substitua {transactionId} por um ID válido
@@ -97,8 +113,11 @@ Content-Type: {{contentType}}
   "userId": "substitua-por-um-id-valido"
 }
 
-### Teste 3: Buscar todas as transações de um usuário
-GET {{baseUrl}}/api/transactions?userId=substitua-por-um-id-valido
+### Teste 3: Buscar transação específica por ID
+GET {{baseUrl}}/api/transactions/substitua-por-um-id-de-transacao-valido
+
+### Teste 4: Buscar transações de um usuário específico
+GET {{baseUrl}}/api/transactions/user/substitua-por-um-id-de-usuario-valido
 
 ### ============================================
 ### TESTES DE VALIDAÇÃO (devem retornar erro)
@@ -168,4 +187,24 @@ Content-Type: {{contentType}}
   "status": "completed",
   "userId": "substitua-por-um-id-valido"
 }
+
+### ============================================
+### TESTES DE ERRO - ENDPOINTS GET
+### ============================================
+
+### Erro: Transação não encontrada (GET /:id)
+# Deve retornar 404 Not Found
+GET {{baseUrl}}/api/transactions/00000000-0000-0000-0000-000000000000
+
+### Erro: ID de transação inválido (GET /:id)
+# UUID inválido - pode retornar 500 ou 400 dependendo do Prisma
+GET {{baseUrl}}/api/transactions/invalid-uuid
+
+### Erro: Usuário não encontrado (GET /user/:userId)
+# Deve retornar 404 Not Found
+GET {{baseUrl}}/api/transactions/user/00000000-0000-0000-0000-000000000000
+
+### Erro: ID de usuário inválido (GET /user/:userId)
+# UUID inválido - pode retornar 500 ou 400 dependendo do Prisma
+GET {{baseUrl}}/api/transactions/user/invalid-uuid
 

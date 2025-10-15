@@ -304,8 +304,8 @@ $ npm run start:transactions:prod
 
 - **POST** `/api/transactions` - Cria uma nova transação
 - **GET** `/api/transactions` - Lista todas as transações
-- **GET** `/api/transactions?userId={userId}` - Lista transações de um usuário específico
-- **GET** `/api/transactions/:id` - Busca uma transação por ID
+- **GET** `/api/transactions/:transactionId` - Busca uma transação específica por ID
+- **GET** `/api/transactions/user/:userId` - Lista todas as transações de um usuário
 - **PATCH** `/api/transactions/:id` - Atualiza uma transação
 - **DELETE** `/api/transactions/:id` - Remove uma transação
 
@@ -333,14 +333,14 @@ curl -X POST http://localhost:3002/api/transactions \
     "userId": "user-id-aqui"
   }'
 
-# Buscar transação por ID
-curl http://localhost:3002/api/transactions/{transactionId}
-
 # Listar todas as transações
 curl http://localhost:3002/api/transactions
 
-# Listar transações de um usuário
-curl http://localhost:3002/api/transactions?userId={userId}
+# Buscar transação específica por ID
+curl http://localhost:3002/api/transactions/{transactionId}
+
+# Listar todas as transações de um usuário
+curl http://localhost:3002/api/transactions/user/{userId}
 
 # Atualizar status de uma transação
 curl -X PATCH http://localhost:3002/api/transactions/{transactionId} \
@@ -352,7 +352,9 @@ curl -X PATCH http://localhost:3002/api/transactions/{transactionId} \
 
 💡 **Dica:** Use o arquivo `apps/transactions/src/transactions/transactions.http` com a extensão REST Client do VSCode para testar os endpoints.
 
-📖 **Documentação completa da API de Transações:** Veja o arquivo `TRANSACTIONS_API.md` para exemplos detalhados, validações e casos de erro.
+📖 **Documentação completa da API de Transações:** 
+- `TRANSACTIONS_API.md` - Documentação do endpoint POST com validações
+- `TRANSACTIONS_GET_API.md` - Documentação dos endpoints GET com exemplos detalhados
 
 ## Build das Aplicações
 

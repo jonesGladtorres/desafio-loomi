@@ -22,11 +22,13 @@ export class TransactionsController {
   }
 
   @Get()
-  findAll(@Query('userId') userId?: string) {
-    if (userId) {
-      return this.transactionsService.findByUserId(userId);
-    }
+  findAll() {
     return this.transactionsService.findAll();
+  }
+
+  @Get('user/:userId')
+  findByUserId(@Param('userId') userId: string) {
+    return this.transactionsService.findByUserId(userId);
   }
 
   @Get(':id')
