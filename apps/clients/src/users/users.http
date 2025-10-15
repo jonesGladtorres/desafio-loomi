@@ -1,0 +1,42 @@
+### Arquivo de teste para a API de Usuários
+### Use com REST Client (VSCode Extension) ou ferramentas como Postman/Insomnia
+
+@baseUrl = http://localhost:3001
+@contentType = application/json
+
+### Criar um novo usuário
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva",
+  "email": "joao.silva@example.com",
+  "cpf": "123.456.789-00",
+  "phone": "(11) 98765-4321",
+  "address": "Rua das Flores, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "zipCode": "01234-567"
+}
+
+### Buscar todos os usuários
+GET {{baseUrl}}/api/users
+
+### Buscar usuário por ID
+# Substitua {userId} por um ID válido
+GET {{baseUrl}}/api/users/{userId}
+
+### Atualizar um usuário
+# Substitua {userId} por um ID válido
+PATCH {{baseUrl}}/api/users/{userId}
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva Atualizado",
+  "phone": "(11) 91234-5678"
+}
+
+### Deletar um usuário
+# Substitua {userId} por um ID válido
+DELETE {{baseUrl}}/api/users/{userId}
+

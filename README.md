@@ -193,6 +193,36 @@ $ npm run start:clients:debug
 $ npm run start:clients:prod
 ```
 
+#### Endpoints disponíveis:
+
+- **GET** `/api/users` - Lista todos os usuários
+- **GET** `/api/users/:id` - Busca um usuário por ID
+- **POST** `/api/users` - Cria um novo usuário
+- **PATCH** `/api/users/:id` - Atualiza um usuário
+- **DELETE** `/api/users/:id` - Remove um usuário
+
+**Exemplo de uso:**
+
+```bash
+# Criar um usuário
+curl -X POST http://localhost:3001/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "cpf": "123.456.789-00",
+    "phone": "(11) 98765-4321"
+  }'
+
+# Buscar usuário por ID
+curl http://localhost:3001/api/users/{userId}
+
+# Listar todos os usuários
+curl http://localhost:3001/api/users
+```
+
+💡 **Dica:** Use o arquivo `apps/clients/src/users/users.http` com a extensão REST Client do VSCode para testar os endpoints.
+
 ### Aplicação Transactions (Porta 3002)
 
 ```bash
