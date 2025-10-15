@@ -52,10 +52,11 @@ desafio-loomi-nestjs/
 │   │   └── 20241015030242_init/
 │   │       └── migration.sql
 │   └── schema.prisma      # Schema do Prisma com modelos User e Transaction
-├── docker-compose.yml     # Configuração do PostgreSQL
+├── docker-compose.yml     # Configuração do PostgreSQL e Redis
 ├── .env                   # Variáveis de ambiente (não versionado)
 ├── .env.example           # Template de variáveis de ambiente
 ├── nest-cli.json          # Configuração do monorepo
+├── CACHE.md               # Documentação do sistema de cache
 └── package.json
 ```
 
@@ -95,6 +96,10 @@ $ npm run db:reset
 - **Database**: loomi_db
 - **User**: loomi_user
 - **Password**: loomi_password
+
+**Redis (Cache):**
+- **Host**: localhost
+- **Port**: 6379
 
 ### 2. Execute as migrações do Prisma
 
@@ -175,6 +180,45 @@ O Prisma Client está configurado para ser gerado em `node_modules/@prisma/clien
 $ npx prisma generate
 ```
 
+## Sistema de Cache com Redis
+
+O app **clients** está configurado com cache usando Redis para melhorar a performance das consultas.
+
+### Características do Cache
+
+- ✅ **Cache Global**: Configurado no `CacheModule` como global
+- ✅ **TTL**: 60 segundos (configurável)
+- ✅ **Invalidação Automática**: Cache é invalidado automaticamente ao criar, atualizar ou deletar usuários
+- ✅ **Endpoints Cacheados**: GET `/api/users` e GET `/api/users/:id`
+
+### Como Funciona
+
+1. **GET `/api/users`** - A primeira requisição busca do banco e armazena no cache. Requisições subsequentes retornam do cache até o TTL expirar ou o cache ser invalidado.
+
+2. **GET `/api/users/:id`** - Similar ao endpoint acima, mas cacheia usuários individualmente.
+
+3. **PATCH `/api/users/:id`** - Ao atualizar um usuário, o cache desse usuário específico e da lista de usuários é invalidado automaticamente.
+
+4. **POST `/api/users`** - Ao criar um usuário, o cache da lista de usuários é invalidado.
+
+5. **DELETE `/api/users/:id`** - Ao deletar um usuário, o cache desse usuário e da lista é invalidado.
+
+### Verificar Status do Cache
+
+```bash
+# Conectar ao Redis CLI
+docker exec -it loomi-redis redis-cli
+
+# Ver todas as chaves em cache
+KEYS *
+
+# Ver uma chave específica
+GET "/api/users"
+
+# Limpar todo o cache
+FLUSHALL
+```
+
 ## Executar as Aplicações
 
 ### Aplicação Clients (Porta 3001)
@@ -234,7 +278,11 @@ curl -X DELETE http://localhost:3001/api/users/{userId}
 
 💡 **Dica:** Use o arquivo `apps/clients/src/users/users.http` com a extensão REST Client do VSCode para testar os endpoints.
 
-📖 **Documentação completa:** Veja o arquivo `USAGE_EXAMPLES.md` para mais exemplos de uso da API.
+📖 **Documentação completa:** 
+- `USAGE_EXAMPLES.md` - Exemplos detalhados de uso da API
+- `CACHE.md` - Documentação completa do sistema de cache com Redis
+
+⚡ **Cache**: Os endpoints GET estão otimizados com Redis para melhor performance!
 
 ### Aplicação Transactions (Porta 3002)
 
