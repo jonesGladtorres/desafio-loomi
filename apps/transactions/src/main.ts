@@ -40,7 +40,7 @@ async function bootstrap() {
     options: {
       urls: [
         process.env.RABBITMQ_URL ||
-        'amqp://loomi_user:loomi_password@localhost:5672',
+          'amqp://loomi_user:loomi_password@localhost:5672',
       ],
       queue: 'user_events_queue',
       queueOptions: {

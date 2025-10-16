@@ -27,6 +27,9 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
+# Instalar wget para health check
+RUN apk add --no-cache wget
+
 # Copiar apenas o necessário para produção
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
@@ -48,4 +51,3 @@ EXPOSE 3002
 
 # Comando de inicialização
 CMD ["node", "dist/apps/transactions/main"]
-

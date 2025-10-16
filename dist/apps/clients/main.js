@@ -1,56 +1,26 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
+/***/ ((module) => {
 
-/***/ "./apps/clients/src/clients.controller.ts":
-/*!************************************************!*\
-  !*** ./apps/clients/src/clients.controller.ts ***!
-  \************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ClientsController = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const clients_service_1 = __webpack_require__(/*! ./clients.service */ "./apps/clients/src/clients.service.ts");
-let ClientsController = class ClientsController {
-    clientsService;
-    constructor(clientsService) {
-        this.clientsService = clientsService;
-    }
-    getHello() {
-        return this.clientsService.getHello();
-    }
-};
-exports.ClientsController = ClientsController;
-__decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
-], ClientsController.prototype, "getHello", null);
-exports.ClientsController = ClientsController = __decorate([
-    (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof clients_service_1.ClientsService !== "undefined" && clients_service_1.ClientsService) === "function" ? _a : Object])
-], ClientsController);
-
+module.exports = require("@nestjs/core");
 
 /***/ }),
+/* 2 */
+/***/ ((module) => {
 
-/***/ "./apps/clients/src/clients.module.ts":
-/*!********************************************!*\
-  !*** ./apps/clients/src/clients.module.ts ***!
-  \********************************************/
+module.exports = require("@nestjs/common");
+
+/***/ }),
+/* 3 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/swagger");
+
+/***/ }),
+/* 4 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -62,13 +32,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ClientsModule = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
-const clients_controller_1 = __webpack_require__(/*! ./clients.controller */ "./apps/clients/src/clients.controller.ts");
-const clients_service_1 = __webpack_require__(/*! ./clients.service */ "./apps/clients/src/clients.service.ts");
-const prisma_1 = __webpack_require__(/*! @app/prisma */ "./libs/prisma/src/index.ts");
-const users_module_1 = __webpack_require__(/*! ./users/users.module */ "./apps/clients/src/users/users.module.ts");
-const redisStore = __webpack_require__(/*! cache-manager-redis-store */ "cache-manager-redis-store");
+const common_1 = __webpack_require__(2);
+const cache_manager_1 = __webpack_require__(5);
+const clients_controller_1 = __webpack_require__(6);
+const clients_service_1 = __webpack_require__(7);
+const prisma_1 = __webpack_require__(8);
+const users_module_1 = __webpack_require__(12);
+const redisStore = __webpack_require__(20);
 let ClientsModule = class ClientsModule {
 };
 exports.ClientsModule = ClientsModule;
@@ -92,11 +62,54 @@ exports.ClientsModule = ClientsModule = __decorate([
 
 
 /***/ }),
+/* 5 */
+/***/ ((module) => {
 
-/***/ "./apps/clients/src/clients.service.ts":
-/*!*********************************************!*\
-  !*** ./apps/clients/src/clients.service.ts ***!
-  \*********************************************/
+module.exports = require("@nestjs/cache-manager");
+
+/***/ }),
+/* 6 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ClientsController = void 0;
+const common_1 = __webpack_require__(2);
+const clients_service_1 = __webpack_require__(7);
+let ClientsController = class ClientsController {
+    clientsService;
+    constructor(clientsService) {
+        this.clientsService = clientsService;
+    }
+    getHello() {
+        return this.clientsService.getHello();
+    }
+};
+exports.ClientsController = ClientsController;
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], ClientsController.prototype, "getHello", null);
+exports.ClientsController = ClientsController = __decorate([
+    (0, common_1.Controller)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof clients_service_1.ClientsService !== "undefined" && clients_service_1.ClientsService) === "function" ? _a : Object])
+], ClientsController);
+
+
+/***/ }),
+/* 7 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -112,8 +125,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ClientsService = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const prisma_1 = __webpack_require__(/*! @app/prisma */ "./libs/prisma/src/index.ts");
+const common_1 = __webpack_require__(2);
+const prisma_1 = __webpack_require__(8);
 let ClientsService = class ClientsService {
     prisma;
     constructor(prisma) {
@@ -140,11 +153,145 @@ exports.ClientsService = ClientsService = __decorate([
 
 
 /***/ }),
+/* 8 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-/***/ "./apps/clients/src/users/dto/create-user.dto.ts":
-/*!*******************************************************!*\
-  !*** ./apps/clients/src/users/dto/create-user.dto.ts ***!
-  \*******************************************************/
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__webpack_require__(9), exports);
+__exportStar(__webpack_require__(10), exports);
+
+
+/***/ }),
+/* 9 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PrismaModule = void 0;
+const common_1 = __webpack_require__(2);
+const prisma_service_1 = __webpack_require__(10);
+let PrismaModule = class PrismaModule {
+};
+exports.PrismaModule = PrismaModule;
+exports.PrismaModule = PrismaModule = __decorate([
+    (0, common_1.Global)(),
+    (0, common_1.Module)({
+        providers: [prisma_service_1.PrismaService],
+        exports: [prisma_service_1.PrismaService],
+    })
+], PrismaModule);
+
+
+/***/ }),
+/* 10 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PrismaService = void 0;
+const common_1 = __webpack_require__(2);
+const client_1 = __webpack_require__(11);
+let PrismaService = class PrismaService extends client_1.PrismaClient {
+    async onModuleInit() {
+        await this.$connect();
+    }
+    async onModuleDestroy() {
+        await this.$disconnect();
+    }
+};
+exports.PrismaService = PrismaService;
+exports.PrismaService = PrismaService = __decorate([
+    (0, common_1.Injectable)()
+], PrismaService);
+
+
+/***/ }),
+/* 11 */
+/***/ ((module) => {
+
+module.exports = require("@prisma/client");
+
+/***/ }),
+/* 12 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UsersModule = void 0;
+const common_1 = __webpack_require__(2);
+const microservices_1 = __webpack_require__(13);
+const users_service_1 = __webpack_require__(14);
+const users_controller_1 = __webpack_require__(15);
+let UsersModule = class UsersModule {
+};
+exports.UsersModule = UsersModule;
+exports.UsersModule = UsersModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            microservices_1.ClientsModule.register([
+                {
+                    name: 'RABBITMQ_SERVICE',
+                    transport: microservices_1.Transport.RMQ,
+                    options: {
+                        urls: [
+                            process.env.RABBITMQ_URL ||
+                                'amqp://loomi_user:loomi_password@localhost:5672',
+                        ],
+                        queue: 'user_events_queue',
+                        queueOptions: {
+                            durable: true,
+                        },
+                    },
+                },
+            ]),
+        ],
+        controllers: [users_controller_1.UsersController],
+        providers: [users_service_1.UsersService],
+    })
+], UsersModule);
+
+
+/***/ }),
+/* 13 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/microservices");
+
+/***/ }),
+/* 14 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -157,214 +304,99 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CreateUserDto = void 0;
-const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-class CreateUserDto {
-    name;
-    email;
-    cpf;
-    phone;
-    address;
-    city;
-    state;
-    zipCode;
-}
-exports.CreateUserDto = CreateUserDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'Nome completo do usuário',
-        example: 'João Silva',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'Email do usuário (único)',
-        example: 'joao.silva@example.com',
-    }),
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "email", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'CPF do usuário (único, opcional)',
-        example: '123.456.789-00',
-        required: false,
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "cpf", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'Telefone do usuário',
-        example: '(11) 98765-4321',
-        required: false,
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "phone", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'Endereço do usuário',
-        example: 'Rua das Flores, 123',
-        required: false,
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "address", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'Cidade do usuário',
-        example: 'São Paulo',
-        required: false,
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "city", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'Estado do usuário (sigla)',
-        example: 'SP',
-        required: false,
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "state", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'CEP do usuário',
-        example: '01234-567',
-        required: false,
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "zipCode", void 0);
+exports.UsersService = void 0;
+const common_1 = __webpack_require__(2);
+const microservices_1 = __webpack_require__(13);
+const prisma_1 = __webpack_require__(8);
+let UsersService = class UsersService {
+    prisma;
+    rabbitClient;
+    constructor(prisma, rabbitClient) {
+        this.prisma = prisma;
+        this.rabbitClient = rabbitClient;
+    }
+    async create(createUserDto) {
+        return this.prisma.user.create({
+            data: createUserDto,
+        });
+    }
+    async findAll() {
+        return this.prisma.user.findMany({
+            include: {
+                transactions: true,
+            },
+        });
+    }
+    async findOne(id) {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            include: {
+                transactions: true,
+            },
+        });
+        if (!user) {
+            throw new common_1.NotFoundException(`User with ID ${id} not found`);
+        }
+        return user;
+    }
+    async update(id, updateUserDto) {
+        const existingUser = await this.findOne(id);
+        const updatedUser = await this.prisma.user.update({
+            where: { id },
+            data: updateUserDto,
+            include: {
+                transactions: true,
+            },
+        });
+        const bankingFieldsUpdated = this.checkBankingFieldsUpdated(updateUserDto);
+        if (bankingFieldsUpdated) {
+            this.rabbitClient.emit('user_banking_updated', {
+                userId: updatedUser.id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                cpf: updatedUser.cpf,
+                updatedFields: Object.keys(updateUserDto),
+                timestamp: new Date().toISOString(),
+            });
+            console.log(`📤 Evento 'user_banking_updated' emitido para o usuário ${updatedUser.id}`);
+        }
+        return updatedUser;
+    }
+    async remove(id) {
+        await this.findOne(id);
+        return this.prisma.user.delete({
+            where: { id },
+        });
+    }
+    checkBankingFieldsUpdated(updateUserDto) {
+        const bankingFields = [
+            'name',
+            'email',
+            'cpf',
+            'phone',
+            'address',
+            'city',
+            'state',
+            'zipCode',
+        ];
+        return bankingFields.some((field) => updateUserDto[field] !== undefined);
+    }
+};
+exports.UsersService = UsersService;
+exports.UsersService = UsersService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(1, (0, common_1.Inject)('RABBITMQ_SERVICE')),
+    __metadata("design:paramtypes", [typeof (_a = typeof prisma_1.PrismaService !== "undefined" && prisma_1.PrismaService) === "function" ? _a : Object, typeof (_b = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _b : Object])
+], UsersService);
 
 
 /***/ }),
-
-/***/ "./apps/clients/src/users/dto/update-user.dto.ts":
-/*!*******************************************************!*\
-  !*** ./apps/clients/src/users/dto/update-user.dto.ts ***!
-  \*******************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UpdateUserDto = void 0;
-const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-class UpdateUserDto {
-    name;
-    email;
-    cpf;
-    phone;
-    address;
-    city;
-    state;
-    zipCode;
-}
-exports.UpdateUserDto = UpdateUserDto;
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Nome completo do usuário',
-        example: 'João Silva Atualizado',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Email do usuário',
-        example: 'joao.novo@example.com',
-    }),
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "email", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'CPF do usuário',
-        example: '987.654.321-00',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "cpf", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Telefone do usuário',
-        example: '(21) 91234-5678',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "phone", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Endereço do usuário',
-        example: 'Avenida Paulista, 1000',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "address", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Cidade do usuário',
-        example: 'Rio de Janeiro',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "city", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Estado do usuário (sigla)',
-        example: 'RJ',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "state", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'CEP do usuário',
-        example: '22041-030',
-    }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "zipCode", void 0);
-
-
-/***/ }),
-
-/***/ "./apps/clients/src/users/users.controller.ts":
-/*!****************************************************!*\
-  !*** ./apps/clients/src/users/users.controller.ts ***!
-  \****************************************************/
+/* 15 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -383,13 +415,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersController = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
-const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
-const users_service_1 = __webpack_require__(/*! ./users.service */ "./apps/clients/src/users/users.service.ts");
-const create_user_dto_1 = __webpack_require__(/*! ./dto/create-user.dto */ "./apps/clients/src/users/dto/create-user.dto.ts");
-const update_user_dto_1 = __webpack_require__(/*! ./dto/update-user.dto */ "./apps/clients/src/users/dto/update-user.dto.ts");
+const common_1 = __webpack_require__(2);
+const swagger_1 = __webpack_require__(3);
+const cache_manager_1 = __webpack_require__(5);
+const cache_manager_2 = __webpack_require__(16);
+const users_service_1 = __webpack_require__(14);
+const create_user_dto_1 = __webpack_require__(17);
+const update_user_dto_1 = __webpack_require__(19);
 let UsersController = class UsersController {
     usersService;
     cacheManager;
@@ -533,61 +565,13 @@ exports.UsersController = UsersController = __decorate([
 
 
 /***/ }),
+/* 16 */
+/***/ ((module) => {
 
-/***/ "./apps/clients/src/users/users.module.ts":
-/*!************************************************!*\
-  !*** ./apps/clients/src/users/users.module.ts ***!
-  \************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UsersModule = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
-const users_service_1 = __webpack_require__(/*! ./users.service */ "./apps/clients/src/users/users.service.ts");
-const users_controller_1 = __webpack_require__(/*! ./users.controller */ "./apps/clients/src/users/users.controller.ts");
-let UsersModule = class UsersModule {
-};
-exports.UsersModule = UsersModule;
-exports.UsersModule = UsersModule = __decorate([
-    (0, common_1.Module)({
-        imports: [
-            microservices_1.ClientsModule.register([
-                {
-                    name: 'RABBITMQ_SERVICE',
-                    transport: microservices_1.Transport.RMQ,
-                    options: {
-                        urls: [
-                            process.env.RABBITMQ_URL ||
-                                'amqp://loomi_user:loomi_password@localhost:5672',
-                        ],
-                        queue: 'user_events_queue',
-                        queueOptions: {
-                            durable: true,
-                        },
-                    },
-                },
-            ]),
-        ],
-        controllers: [users_controller_1.UsersController],
-        providers: [users_service_1.UsersService],
-    })
-], UsersModule);
-
+module.exports = require("cache-manager");
 
 /***/ }),
-
-/***/ "./apps/clients/src/users/users.service.ts":
-/*!*************************************************!*\
-  !*** ./apps/clients/src/users/users.service.ts ***!
-  \*************************************************/
+/* 17 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -600,282 +584,218 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UsersService = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const microservices_1 = __webpack_require__(/*! @nestjs/microservices */ "@nestjs/microservices");
-const prisma_1 = __webpack_require__(/*! @app/prisma */ "./libs/prisma/src/index.ts");
-let UsersService = class UsersService {
-    prisma;
-    rabbitClient;
-    constructor(prisma, rabbitClient) {
-        this.prisma = prisma;
-        this.rabbitClient = rabbitClient;
-    }
-    async create(createUserDto) {
-        return this.prisma.user.create({
-            data: createUserDto,
-        });
-    }
-    async findAll() {
-        return this.prisma.user.findMany({
-            include: {
-                transactions: true,
-            },
-        });
-    }
-    async findOne(id) {
-        const user = await this.prisma.user.findUnique({
-            where: { id },
-            include: {
-                transactions: true,
-            },
-        });
-        if (!user) {
-            throw new common_1.NotFoundException(`User with ID ${id} not found`);
-        }
-        return user;
-    }
-    async update(id, updateUserDto) {
-        const existingUser = await this.findOne(id);
-        const updatedUser = await this.prisma.user.update({
-            where: { id },
-            data: updateUserDto,
-            include: {
-                transactions: true,
-            },
-        });
-        const bankingFieldsUpdated = this.checkBankingFieldsUpdated(updateUserDto);
-        if (bankingFieldsUpdated) {
-            this.rabbitClient.emit('user_banking_updated', {
-                userId: updatedUser.id,
-                name: updatedUser.name,
-                email: updatedUser.email,
-                cpf: updatedUser.cpf,
-                updatedFields: Object.keys(updateUserDto),
-                timestamp: new Date().toISOString(),
-            });
-            console.log(`📤 Evento 'user_banking_updated' emitido para o usuário ${updatedUser.id}`);
-        }
-        return updatedUser;
-    }
-    async remove(id) {
-        await this.findOne(id);
-        return this.prisma.user.delete({
-            where: { id },
-        });
-    }
-    checkBankingFieldsUpdated(updateUserDto) {
-        const bankingFields = [
-            'name',
-            'email',
-            'cpf',
-            'phone',
-            'address',
-            'city',
-            'state',
-            'zipCode',
-        ];
-        return bankingFields.some((field) => updateUserDto[field] !== undefined);
-    }
-};
-exports.UsersService = UsersService;
-exports.UsersService = UsersService = __decorate([
-    (0, common_1.Injectable)(),
-    __param(1, (0, common_1.Inject)('RABBITMQ_SERVICE')),
-    __metadata("design:paramtypes", [typeof (_a = typeof prisma_1.PrismaService !== "undefined" && prisma_1.PrismaService) === "function" ? _a : Object, typeof (_b = typeof microservices_1.ClientProxy !== "undefined" && microservices_1.ClientProxy) === "function" ? _b : Object])
-], UsersService);
+exports.CreateUserDto = void 0;
+const class_validator_1 = __webpack_require__(18);
+const swagger_1 = __webpack_require__(3);
+class CreateUserDto {
+    name;
+    email;
+    cpf;
+    phone;
+    address;
+    city;
+    state;
+    zipCode;
+}
+exports.CreateUserDto = CreateUserDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Nome completo do usuário',
+        example: 'João Silva',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Email do usuário (único)',
+        example: 'joao.silva@example.com',
+    }),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'CPF do usuário (único, opcional)',
+        example: '123.456.789-00',
+        required: false,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "cpf", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Telefone do usuário',
+        example: '(11) 98765-4321',
+        required: false,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Endereço do usuário',
+        example: 'Rua das Flores, 123',
+        required: false,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "address", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Cidade do usuário',
+        example: 'São Paulo',
+        required: false,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "city", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Estado do usuário (sigla)',
+        example: 'SP',
+        required: false,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "state", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'CEP do usuário',
+        example: '01234-567',
+        required: false,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "zipCode", void 0);
 
 
 /***/ }),
-
-/***/ "./libs/prisma/src/index.ts":
-/*!**********************************!*\
-  !*** ./libs/prisma/src/index.ts ***!
-  \**********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(/*! ./prisma.module */ "./libs/prisma/src/prisma.module.ts"), exports);
-__exportStar(__webpack_require__(/*! ./prisma.service */ "./libs/prisma/src/prisma.service.ts"), exports);
-
-
-/***/ }),
-
-/***/ "./libs/prisma/src/prisma.module.ts":
-/*!******************************************!*\
-  !*** ./libs/prisma/src/prisma.module.ts ***!
-  \******************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PrismaModule = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const prisma_service_1 = __webpack_require__(/*! ./prisma.service */ "./libs/prisma/src/prisma.service.ts");
-let PrismaModule = class PrismaModule {
-};
-exports.PrismaModule = PrismaModule;
-exports.PrismaModule = PrismaModule = __decorate([
-    (0, common_1.Global)(),
-    (0, common_1.Module)({
-        providers: [prisma_service_1.PrismaService],
-        exports: [prisma_service_1.PrismaService],
-    })
-], PrismaModule);
-
-
-/***/ }),
-
-/***/ "./libs/prisma/src/prisma.service.ts":
-/*!*******************************************!*\
-  !*** ./libs/prisma/src/prisma.service.ts ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PrismaService = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const client_1 = __webpack_require__(/*! @prisma/client */ "@prisma/client");
-let PrismaService = class PrismaService extends client_1.PrismaClient {
-    async onModuleInit() {
-        await this.$connect();
-    }
-    async onModuleDestroy() {
-        await this.$disconnect();
-    }
-};
-exports.PrismaService = PrismaService;
-exports.PrismaService = PrismaService = __decorate([
-    (0, common_1.Injectable)()
-], PrismaService);
-
-
-/***/ }),
-
-/***/ "@nestjs/cache-manager":
-/*!****************************************!*\
-  !*** external "@nestjs/cache-manager" ***!
-  \****************************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/cache-manager");
-
-/***/ }),
-
-/***/ "@nestjs/common":
-/*!*********************************!*\
-  !*** external "@nestjs/common" ***!
-  \*********************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/common");
-
-/***/ }),
-
-/***/ "@nestjs/core":
-/*!*******************************!*\
-  !*** external "@nestjs/core" ***!
-  \*******************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/core");
-
-/***/ }),
-
-/***/ "@nestjs/microservices":
-/*!****************************************!*\
-  !*** external "@nestjs/microservices" ***!
-  \****************************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/microservices");
-
-/***/ }),
-
-/***/ "@nestjs/swagger":
-/*!**********************************!*\
-  !*** external "@nestjs/swagger" ***!
-  \**********************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/swagger");
-
-/***/ }),
-
-/***/ "@prisma/client":
-/*!*********************************!*\
-  !*** external "@prisma/client" ***!
-  \*********************************/
-/***/ ((module) => {
-
-module.exports = require("@prisma/client");
-
-/***/ }),
-
-/***/ "cache-manager":
-/*!********************************!*\
-  !*** external "cache-manager" ***!
-  \********************************/
-/***/ ((module) => {
-
-module.exports = require("cache-manager");
-
-/***/ }),
-
-/***/ "cache-manager-redis-store":
-/*!********************************************!*\
-  !*** external "cache-manager-redis-store" ***!
-  \********************************************/
-/***/ ((module) => {
-
-module.exports = require("cache-manager-redis-store");
-
-/***/ }),
-
-/***/ "class-validator":
-/*!**********************************!*\
-  !*** external "class-validator" ***!
-  \**********************************/
+/* 18 */
 /***/ ((module) => {
 
 module.exports = require("class-validator");
 
-/***/ })
+/***/ }),
+/* 19 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-/******/ 	});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UpdateUserDto = void 0;
+const class_validator_1 = __webpack_require__(18);
+const swagger_1 = __webpack_require__(3);
+class UpdateUserDto {
+    name;
+    email;
+    cpf;
+    phone;
+    address;
+    city;
+    state;
+    zipCode;
+}
+exports.UpdateUserDto = UpdateUserDto;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Nome completo do usuário',
+        example: 'João Silva Atualizado',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Email do usuário',
+        example: 'joao.novo@example.com',
+    }),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'CPF do usuário',
+        example: '987.654.321-00',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "cpf", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Telefone do usuário',
+        example: '(21) 91234-5678',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Endereço do usuário',
+        example: 'Avenida Paulista, 1000',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "address", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Cidade do usuário',
+        example: 'Rio de Janeiro',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "city", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Estado do usuário (sigla)',
+        example: 'RJ',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "state", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'CEP do usuário',
+        example: '22041-030',
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "zipCode", void 0);
+
+
+/***/ }),
+/* 20 */
+/***/ ((module) => {
+
+module.exports = require("cache-manager-redis-store");
+
+/***/ })
+/******/ 	]);
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
@@ -906,15 +826,12 @@ var __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 var exports = __webpack_exports__;
-/*!**********************************!*\
-  !*** ./apps/clients/src/main.ts ***!
-  \**********************************/
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const clients_module_1 = __webpack_require__(/*! ./clients.module */ "./apps/clients/src/clients.module.ts");
+const core_1 = __webpack_require__(1);
+const common_1 = __webpack_require__(2);
+const swagger_1 = __webpack_require__(3);
+const clients_module_1 = __webpack_require__(4);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(clients_module_1.ClientsModule);
     app.useGlobalPipes(new common_1.ValidationPipe({

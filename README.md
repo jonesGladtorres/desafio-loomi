@@ -28,11 +28,9 @@ Monorepo NestJS para o Desafio Loomi contendo duas aplicações:
 - **clients** - API para gerenciamento de clientes (porta 3001)
 - **transactions** - API para gerenciamento de transações (porta 3002)
 
-⚡ **Quick Start**: Execute `npm run setup` ou `make setup` para configurar tudo automaticamente!
+⚡ **Quick Start**: Execute `npm install` e depois `npm run docker:start` para rodar tudo!
 
-📖 **Referência Rápida**: 
-- `QUICK_REFERENCE.md` - Lista completa de comandos NPM
-- `Makefile` - Use `make help` para ver comandos disponíveis
+📖 **Guia Rápido**: Veja `START_HERE.md` para instruções passo a passo
 
 ## Estrutura do Projeto
 
@@ -58,79 +56,55 @@ desafio-loomi-nestjs/
 │   │   └── 20241015030242_init/
 │   │       └── migration.sql
 │   └── schema.prisma      # Schema do Prisma com modelos User e Transaction
-├── docker-compose.yml     # Orquestração completa (produção)
-├── docker-compose.dev.yml # Apenas infraestrutura (desenvolvimento)
+├── docker-compose.yml     # Orquestração de todos os serviços
 ├── apps/
 │   ├── clients/Dockerfile      # Dockerfile otimizado para clients
 │   └── transactions/Dockerfile # Dockerfile otimizado para transactions
-├── .dockerignore          # Arquivos ignorados no build Docker
 ├── .env                   # Variáveis de ambiente (não versionado)
 ├── .env.example           # Template de variáveis de ambiente
-├── nest-cli.json          # Configuração do monorepo
-├── DOCKER.md              # Documentação completa do Docker
-├── QUICK_REFERENCE.md     # Referência rápida de comandos
-├── Makefile               # Comandos Make para facilitar o uso
-├── scripts/
-│   └── setup.sh           # Script de setup automático
+├── START_HERE.md          # 🔥 Guia rápido de como rodar o projeto
 └── package.json
 ```
 
-## Quick Start
-
-### Setup Automático (Recomendado)
-
-Execute o script de setup que configura tudo automaticamente:
-
-```bash
-# Clone o repositório (se ainda não fez)
-# git clone <repository-url>
-# cd desafio-loomi-nestjs
-
-# Execute o script de setup
-$ npm run setup
-```
-
-Este script irá:
-1. ✅ Instalar dependências
-2. ✅ Criar arquivo .env
-3. ✅ Iniciar PostgreSQL, Redis e RabbitMQ em containers
-4. ✅ Gerar Prisma Client
-5. ✅ Aplicar migrações do banco
-6. ✅ Fazer build das aplicações
-
-Depois, inicie as aplicações:
-
-```bash
-# Terminal 1 - App Clients
-$ npm run start:clients:dev
-
-# Terminal 2 - App Transactions
-$ npm run start:transactions:dev
-```
-
-### Setup Manual
-
-Se preferir configurar manualmente:
+## 🚀 Quick Start - Um Único Comando
 
 ```bash
 # 1. Instalar dependências
-$ npm install
+npm install
 
-# 2. Iniciar infraestrutura
-$ npm run docker:dev:up
-
-# 3. Configurar banco de dados
-$ npm run prisma:generate
-$ npm run prisma:migrate:deploy
-
-# 4. Iniciar aplicações
-$ npm run start:clients:dev
-$ npm run start:transactions:dev
+# 2. Iniciar TODOS os serviços com Docker
+npm run docker:start
 ```
 
-## Instalação Detalhada
+**Pronto! ✅** Todos os serviços estarão rodando em containers:
 
-### Instalação de Dependências
+| Serviço | URL | Descrição |
+|---------|-----|-----------|
+| **Clients API** | http://localhost:3001/api/users | API de usuários |
+| **Transactions API** | http://localhost:3002/api/transactions | API de transações |
+| **PostgreSQL** | localhost:5432 | Banco de dados |
+| **Redis** | localhost:6379 | Cache |
+| **RabbitMQ** | localhost:5672 | Message broker |
+| **RabbitMQ UI** | http://localhost:15672 | Interface web (loomi_user/loomi_password) |
+
+### Primeira Vez? Aplique as Migrações
+
+```bash
+# Apenas na primeira execução
+docker-compose exec clients-app npx prisma migrate deploy
+```
+
+### Comandos Úteis
+
+```bash
+npm run docker:ps      # Ver status dos containers
+npm run docker:logs    # Ver logs em tempo real
+npm run docker:stop    # Parar todos os serviços
+npm run docker:restart # Reiniciar serviços
+npm run docker:clean   # Limpar tudo (volumes + imagens)
+```
+
+## Instalação
 
 ```bash
 $ npm install
