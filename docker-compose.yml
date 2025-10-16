@@ -1,4 +1,5 @@
 services:
+  # Database PostgreSQL
   postgres:
     image: postgres:16-alpine
     container_name: loomi-postgres
@@ -16,7 +17,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - loomi-network
 
+  # Cache Redis
   redis:
     image: redis:7-alpine
     container_name: loomi-redis
@@ -30,10 +34,100 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - loomi-network
+
+  # Message Broker RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: loomi-rabbitmq
+    restart: unless-stopped
+    ports:
+      - '5672:5672'   # AMQP protocol
+      - '15672:15672' # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: loomi_user
+      RABBITMQ_DEFAULT_PASS: loomi_password
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - loomi-network
+
+  # Aplicação Clients
+  clients-app:
+    build:
+      context: .
+      dockerfile: apps/clients/Dockerfile
+    container_name: loomi-clients-app
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://loomi_user:loomi_password@postgres:5432/loomi_db?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://loomi_user:loomi_password@rabbitmq:5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - loomi-network
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3001/api/users']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Aplicação Transactions
+  transactions-app:
+    build:
+      context: .
+      dockerfile: apps/transactions/Dockerfile
+    container_name: loomi-transactions-app
+    restart: unless-stopped
+    ports:
+      - '3002:3002'
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://loomi_user:loomi_password@postgres:5432/loomi_db?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://loomi_user:loomi_password@rabbitmq:5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - loomi-network
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3002/api/transactions']
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  loomi-network:
+    driver: bridge
 

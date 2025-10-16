@@ -79,6 +79,42 @@ Content-Type: {{contentType}}
 DELETE {{baseUrl}}/api/users/{userId}
 
 ### ============================================
+### TESTES DE RABBITMQ (Comunicação Assíncrona)
+### ============================================
+
+### Teste RabbitMQ 1: Atualizar dados bancários (dispara evento)
+# IMPORTANTE: Verifique os logs do app transactions após executar
+# Deve mostrar: "📥 Evento recebido: user_banking_updated"
+PATCH {{baseUrl}}/api/users/{userId}
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva - Atualizado via RabbitMQ",
+  "email": "joao.atualizado@example.com"
+}
+
+### Teste RabbitMQ 2: Atualizar múltiplos campos bancários
+# Verifica o array updatedFields no log do Transactions App
+PATCH {{baseUrl}}/api/users/{userId}
+Content-Type: {{contentType}}
+
+{
+  "name": "Maria Santos",
+  "phone": "(21) 98765-4321",
+  "address": "Rua Nova, 456",
+  "city": "Rio de Janeiro"
+}
+
+### Teste RabbitMQ 3: Atualizar apenas CPF
+# Campo bancário sensível - deve disparar evento
+PATCH {{baseUrl}}/api/users/{userId}
+Content-Type: {{contentType}}
+
+{
+  "cpf": "987.654.321-00"
+}
+
+### ============================================
 ### TESTES DE CACHE
 ### ============================================
 
