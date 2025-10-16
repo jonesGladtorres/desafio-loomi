@@ -1,16 +1,16 @@
-### Arquivo de teste para a API de Usuários
-### Use com REST Client (VSCode Extension) ou ferramentas como Postman/Insomnia
-### 
-### IMPORTANTE: Os endpoints GET estão com cache Redis habilitado!
-### - Primeira requisição: busca do banco
-### - Requisições subsequentes: retorna do cache (muito mais rápido)
-### - Cache expira após 60 segundos ou ao modificar dados
+### Arquivo de testes da API de Usuários
+### Use com a extensão REST Client do VSCode
 
-@baseUrl = http://localhost:3001
+@baseUrl = http://localhost:3001/api/users
 @contentType = application/json
+@userId = substituir-com-id-real
 
-### Criar um novo usuário
-POST {{baseUrl}}/api/users
+###############################################
+# CRIAR USUÁRIOS
+###############################################
+
+### 1. Criar um novo usuário completo (com dados bancários)
+POST {{baseUrl}}
 Content-Type: {{contentType}}
 
 {
@@ -21,128 +21,212 @@ Content-Type: {{contentType}}
   "address": "Rua das Flores, 123",
   "city": "São Paulo",
   "state": "SP",
-  "zipCode": "01234-567"
+  "zipCode": "01234-567",
+  "bankAgency": "0001",
+  "bankAccount": "12345",
+  "bankAccountDigit": "6"
 }
 
-### Buscar todos os usuários (com cache)
-# Primeira requisição: busca do banco e cacheia
-# Requisições seguintes: retorna do cache (muito mais rápido!)
-GET {{baseUrl}}/api/users
+###
 
-### Buscar todos os usuários novamente (do cache)
-# Esta requisição deve ser MUITO mais rápida
-GET {{baseUrl}}/api/users
-
-### Buscar usuário por ID (com cache)
-# Substitua {userId} por um ID válido
-# Exemplo: GET {{baseUrl}}/api/users/123e4567-e89b-12d3-a456-426614174000
-GET {{baseUrl}}/api/users/{userId}
-
-### Buscar o mesmo usuário novamente (do cache)
-# Esta requisição retorna do cache
-GET {{baseUrl}}/api/users/{userId}
-
-### Atualizar um usuário (atualização parcial)
-# Substitua {userId} por um ID válido
-PATCH {{baseUrl}}/api/users/{userId}
-Content-Type: {{contentType}}
-
-{
-  "name": "João Silva Atualizado",
-  "phone": "(11) 91234-5678"
-}
-
-### Atualizar apenas o email do usuário
-# Substitua {userId} por um ID válido
-PATCH {{baseUrl}}/api/users/{userId}
-Content-Type: {{contentType}}
-
-{
-  "email": "joao.novo@example.com"
-}
-
-### Atualizar endereço completo do usuário
-# Substitua {userId} por um ID válido
-PATCH {{baseUrl}}/api/users/{userId}
-Content-Type: {{contentType}}
-
-{
-  "address": "Avenida Paulista, 1000",
-  "city": "São Paulo",
-  "state": "SP",
-  "zipCode": "01310-100"
-}
-
-### Deletar um usuário
-# Substitua {userId} por um ID válido
-# IMPORTANTE: Isso invalidará o cache do usuário e da lista!
-DELETE {{baseUrl}}/api/users/{userId}
-
-### ============================================
-### TESTES DE RABBITMQ (Comunicação Assíncrona)
-### ============================================
-
-### Teste RabbitMQ 1: Atualizar dados bancários (dispara evento)
-# IMPORTANTE: Verifique os logs do app transactions após executar
-# Deve mostrar: "📥 Evento recebido: user_banking_updated"
-PATCH {{baseUrl}}/api/users/{userId}
-Content-Type: {{contentType}}
-
-{
-  "name": "João Silva - Atualizado via RabbitMQ",
-  "email": "joao.atualizado@example.com"
-}
-
-### Teste RabbitMQ 2: Atualizar múltiplos campos bancários
-# Verifica o array updatedFields no log do Transactions App
-PATCH {{baseUrl}}/api/users/{userId}
+### 2. Criar usuário mínimo (apenas campos obrigatórios)
+POST {{baseUrl}}
 Content-Type: {{contentType}}
 
 {
   "name": "Maria Santos",
-  "phone": "(21) 98765-4321",
-  "address": "Rua Nova, 456",
-  "city": "Rio de Janeiro"
+  "email": "maria.santos@example.com"
 }
 
-### Teste RabbitMQ 3: Atualizar apenas CPF
-# Campo bancário sensível - deve disparar evento
-PATCH {{baseUrl}}/api/users/{userId}
+###
+
+### 3. Criar usuário com CPF válido
+POST {{baseUrl}}
 Content-Type: {{contentType}}
 
 {
-  "cpf": "987.654.321-00"
+  "name": "Pedro Oliveira",
+  "email": "pedro.oliveira@example.com",
+  "cpf": "529.982.247-25",
+  "phone": "(21) 98765-4321"
 }
 
-### ============================================
-### TESTES DE CACHE
-### ============================================
+###############################################
+# CONSULTAR USUÁRIOS
+###############################################
 
-### Teste 1: Verificar cache funcionando
-# 1. Execute a requisição abaixo 2 vezes
-# 2. A segunda deve ser MUITO mais rápida
-GET {{baseUrl}}/api/users
+### 4. Listar todos os usuários
+GET {{baseUrl}}
 
-### Teste 2: Verificar invalidação de cache
-# 1. Execute GET acima para criar o cache
-# 2. Execute o PATCH abaixo para invalidar
-# 3. Execute GET novamente - deve buscar do banco novamente
-PATCH {{baseUrl}}/api/users/{userId}
+###
+
+### 5. Buscar usuário por ID
+GET {{baseUrl}}/{{userId}}
+
+###############################################
+# ATUALIZAR USUÁRIOS
+###############################################
+
+### 6. Atualizar usuário (dados pessoais)
+PATCH {{baseUrl}}/{{userId}}
 Content-Type: {{contentType}}
 
 {
-  "name": "Teste de Cache"
+  "name": "João Silva Atualizado",
+  "phone": "(11) 91234-5678",
+  "address": "Rua Nova, 456"
 }
 
-### Teste 3: Verificar cache após criação
-# 1. Execute GET para cachear
-# 2. Crie um novo usuário abaixo
-# 3. Execute GET novamente - cache foi invalidado, lista atualizada
-POST {{baseUrl}}/api/users
+###
+
+### 7. Atualizar dados bancários (dispara evento RabbitMQ)
+PATCH {{baseUrl}}/{{userId}}
 Content-Type: {{contentType}}
 
 {
-  "name": "Novo Usuário",
-  "email": "novo@example.com"
+  "bankAgency": "0002",
+  "bankAccount": "54321",
+  "bankAccountDigit": "9"
 }
 
+###
+
+### 8. Atualizar foto de perfil
+PATCH {{baseUrl}}/{{userId}}/profile-picture
+Content-Type: {{contentType}}
+
+{
+  "profilePicture": "https://example.com/photos/user-{{userId}}.jpg"
+}
+
+###############################################
+# DELETAR USUÁRIOS
+###############################################
+
+### 9. Deletar um usuário
+DELETE {{baseUrl}}/{{userId}}
+
+###############################################
+# TESTES DE CACHE
+###############################################
+
+### 10. Testar cache - Primeira requisição (será cacheada)
+GET {{baseUrl}}
+
+###
+
+### 11. Testar cache - Segunda requisição (virá do cache)
+GET {{baseUrl}}
+
+###
+
+### 12. Testar cache individual - Buscar usuário (será cacheado)
+GET {{baseUrl}}/{{userId}}
+
+###############################################
+# TESTES DE VALIDAÇÃO
+###############################################
+
+### 13. Teste de validação - CPF inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste CPF Inválido",
+  "email": "teste.cpf@example.com",
+  "cpf": "111.111.111-11"
+}
+
+###
+
+### 14. Teste de validação - Email inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Email",
+  "email": "email-invalido"
+}
+
+###
+
+### 15. Teste de validação - Telefone formato inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Telefone",
+  "email": "teste.telefone@example.com",
+  "phone": "11987654321"
+}
+
+###
+
+### 16. Teste de validação - CEP formato inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste CEP",
+  "email": "teste.cep@example.com",
+  "zipCode": "12345"
+}
+
+###
+
+### 17. Teste de validação - Agência bancária inválida (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Agência",
+  "email": "teste.agencia@example.com",
+  "bankAgency": "123"
+}
+
+###
+
+### 18. Teste de validação - URL de foto inválida (deve falhar)
+PATCH {{baseUrl}}/{{userId}}/profile-picture
+Content-Type: {{contentType}}
+
+{
+  "profilePicture": "not-a-valid-url"
+}
+
+###############################################
+# TESTES DE INTEGRAÇÃO RABBITMQ
+###############################################
+
+### 19. Criar usuário para teste de eventos
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Usuário Teste Eventos",
+  "email": "eventos@example.com",
+  "cpf": "456.789.123-00",
+  "phone": "(31) 98765-4321",
+  "bankAgency": "0003",
+  "bankAccount": "67890",
+  "bankAccountDigit": "1"
+}
+
+###
+
+### 20. Atualizar dados bancários (dispara evento user_banking_updated)
+### Observe os logs do microsserviço de transações para ver o evento sendo recebido
+PATCH {{baseUrl}}/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "bankAgency": "0004",
+  "bankAccount": "99999",
+  "bankAccountDigit": "2",
+  "address": "Avenida Principal, 789",
+  "city": "Belo Horizonte",
+  "state": "MG",
+  "zipCode": "30000-000"
+}
+
+###

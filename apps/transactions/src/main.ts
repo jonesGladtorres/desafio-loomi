@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { TransactionsModule } from './transactions.module';
+import { TransactionsResourceModule } from './transactions/transactions.module';
 
 async function bootstrap() {
   // Cria aplicação HTTP
-  const app = await NestFactory.create(TransactionsModule);
+  const app = await NestFactory.create(TransactionsResourceModule);
 
   // Habilita validação global de DTOs
   app.useGlobalPipes(

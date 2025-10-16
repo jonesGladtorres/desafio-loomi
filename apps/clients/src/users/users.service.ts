@@ -3,6 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '@app/prisma';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +21,8 @@ export class UsersService {
   async findAll() {
     return this.prisma.user.findMany({
       include: {
-        transactions: true,
+        sentTransactions: true,
+        receivedTransactions: true,
       },
     });
   }
@@ -29,7 +31,8 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        transactions: true,
+        sentTransactions: true,
+        receivedTransactions: true,
       },
     });
 
@@ -49,7 +52,8 @@ export class UsersService {
       where: { id },
       data: updateUserDto,
       include: {
-        transactions: true,
+        sentTransactions: true,
+        receivedTransactions: true,
       },
     });
 
@@ -85,6 +89,19 @@ export class UsersService {
     });
   }
 
+  async updateProfilePicture(id: string, updateProfilePictureDto: UpdateProfilePictureDto) {
+    // Verifica se o usuário existe antes de atualizar
+    await this.findOne(id);
+
+    // Atualiza apenas a foto de perfil
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        profilePicture: updateProfilePictureDto.profilePicture,
+      },
+    });
+  }
+
   private checkBankingFieldsUpdated(updateUserDto: UpdateUserDto): boolean {
     const bankingFields = [
       'name',
@@ -95,6 +112,9 @@ export class UsersService {
       'city',
       'state',
       'zipCode',
+      'bankAgency',
+      'bankAccount',
+      'bankAccountDigit',
     ];
     return bankingFields.some((field) => updateUserDto[field] !== undefined);
   }

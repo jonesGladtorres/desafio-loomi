@@ -22,6 +22,7 @@ import { Cache } from 'cache-manager';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
 
 @ApiTags('users')
 @Controller('api/users')
@@ -137,5 +138,48 @@ export class UsersController {
     await this.cacheManager.del('/api/users');
 
     return user;
+  }
+
+  @Patch(':id/profile-picture')
+  @ApiOperation({ 
+    summary: 'Atualizar foto de perfil do usuário',
+    description: 'Atualiza apenas a foto de perfil do usuário. Aceita uma URL válida para a imagem.'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID do usuário',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiBody({ type: UpdateProfilePictureDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Foto de perfil atualizada com sucesso',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Usuário não encontrado',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'URL inválida para foto de perfil',
+  })
+  async updateProfilePicture(
+    @Param('id') id: string,
+    @Body() updateProfilePictureDto: UpdateProfilePictureDto,
+  ) {
+    const user = await this.usersService.updateProfilePicture(id, updateProfilePictureDto);
+
+    // Invalida o cache do usuário específico
+    await this.cacheManager.del(`/api/users/${id}`);
+    await this.cacheManager.del('/api/users');
+
+    return {
+      message: 'Foto de perfil atualizada com sucesso',
+      user: {
+        id: user.id,
+        name: user.name,
+        profilePicture: user.profilePicture,
+      }
+    };
   }
 }
