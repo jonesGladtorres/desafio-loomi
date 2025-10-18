@@ -1,5 +1,6 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Matches } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsCPF } from '../validators/cpf.validator';
 
 export class UpdateUserDto {
   @ApiPropertyOptional({
@@ -24,6 +25,7 @@ export class UpdateUserDto {
   })
   @IsString()
   @IsOptional()
+  @IsCPF()
   cpf?: string;
 
   @ApiPropertyOptional({
@@ -64,5 +66,39 @@ export class UpdateUserDto {
   })
   @IsString()
   @IsOptional()
+  @Matches(/^\d{5}-?\d{3}$/, {
+    message: 'CEP deve estar no formato XXXXX-XXX ou XXXXXXXX',
+  })
   zipCode?: string;
+
+  @ApiPropertyOptional({
+    description: 'Agência bancária',
+    example: '0001',
+  })
+  @IsString()
+  @IsOptional()
+  @Matches(/^\d{4}(-\d)?$/, {
+    message:
+      'Agência deve conter 4 dígitos, opcionalmente com dígito verificador (XXXX ou XXXX-X)',
+  })
+  bankAgency?: string;
+
+  @ApiPropertyOptional({
+    description: 'Conta corrente',
+    example: '12345',
+  })
+  @IsString()
+  @IsOptional()
+  @Matches(/^\d{5,10}$/, {
+    message: 'Conta deve conter entre 5 e 10 dígitos',
+  })
+  bankAccount?: string;
+
+  @ApiPropertyOptional({
+    description: 'Dígito da conta corrente',
+    example: '6',
+  })
+  @IsString()
+  @IsOptional()
+  bankAccountDigit?: string;
 }
