@@ -14,6 +14,9 @@ help:
 	@echo "  make dev-up             - Iniciar infraestrutura (postgres, redis, rabbitmq)"
 	@echo "  make dev-down           - Parar infraestrutura"
 	@echo "  make dev-logs           - Ver logs da infraestrutura"
+	@echo "  make dev-full           - Iniciar tudo com hot reload (apps + infraestrutura)"
+	@echo "  make dev-full-down      - Parar tudo (apps + infraestrutura)"
+	@echo "  make dev-full-logs      - Ver logs de tudo"
 	@echo ""
 	@echo "🐳 Docker - Produção"
 	@echo "  make docker-up          - Build e iniciar todos os serviços"
@@ -68,6 +71,26 @@ dev-down:
 	@echo "✅ Infraestrutura parada!"
 
 dev-logs:
+	@docker-compose -f docker-compose.dev.yml logs -f
+
+# Docker - Desenvolvimento Completo (com Hot Reload)
+dev-full:
+	@docker-compose -f docker-compose.dev.yml up --build -d
+	@echo "✅ Desenvolvimento completo iniciado com hot reload!"
+	@echo "   - PostgreSQL: localhost:5432"
+	@echo "   - Redis: localhost:6379"
+	@echo "   - RabbitMQ: localhost:5672"
+	@echo "   - RabbitMQ UI: http://localhost:15672"
+	@echo "   - Clients API: http://localhost:3001/api/users"
+	@echo "   - Transactions API: http://localhost:3002/api/transactions"
+	@echo ""
+	@echo "🔥 Hot reload ativo! As mudanças no código serão aplicadas automaticamente."
+
+dev-full-down:
+	@docker-compose -f docker-compose.dev.yml down
+	@echo "✅ Desenvolvimento completo parado!"
+
+dev-full-logs:
 	@docker-compose -f docker-compose.dev.yml logs -f
 
 # Docker - Produção

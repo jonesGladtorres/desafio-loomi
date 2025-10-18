@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
-import { ClientsController } from './clients.controller';
-import { ClientsService } from './clients.service';
 import { PrismaModule } from '@app/prisma';
-import { UsersModule } from './users/users.module';
 import * as redisStore from 'cache-manager-redis-store';
+import { UsersModule } from './users/clients.module';
 
 @Module({
   imports: [
@@ -18,7 +16,7 @@ import * as redisStore from 'cache-manager-redis-store';
     PrismaModule,
     UsersModule,
   ],
-  controllers: [ClientsController],
-  providers: [ClientsService],
+  controllers: [],
+  providers: [],
 })
 export class ClientsModule { }

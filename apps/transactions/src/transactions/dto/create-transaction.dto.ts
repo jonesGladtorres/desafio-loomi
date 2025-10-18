@@ -55,24 +55,36 @@ export class CreateTransactionDto {
   status: string;
 
   @ApiProperty({
-    description: 'UUID do usuário remetente (obrigatório para débito e transferência)',
+    description:
+      'UUID do usuário remetente (obrigatório para débito e transferência)',
     example: '123e4567-e89b-12d3-a456-426614174000',
     format: 'uuid',
     required: false,
   })
-  @ValidateIf((obj) => obj.type === 'debit' || obj.type === 'transfer')
+  @ValidateIf(
+    (obj: CreateTransactionDto) =>
+      obj.type === 'debit' || obj.type === 'transfer',
+  )
   @IsUUID('4', { message: 'senderUserId must be a valid UUID' })
-  @IsNotEmpty({ message: 'senderUserId is required for debit and transfer transactions' })
+  @IsNotEmpty({
+    message: 'senderUserId is required for debit and transfer transactions',
+  })
   senderUserId?: string;
 
   @ApiProperty({
-    description: 'UUID do usuário destinatário (obrigatório para crédito e transferência)',
+    description:
+      'UUID do usuário destinatário (obrigatório para crédito e transferência)',
     example: '987e6543-e21b-12d3-a456-426614174001',
     format: 'uuid',
     required: false,
   })
-  @ValidateIf((obj) => obj.type === 'credit' || obj.type === 'transfer')
+  @ValidateIf(
+    (obj: CreateTransactionDto) =>
+      obj.type === 'credit' || obj.type === 'transfer',
+  )
   @IsUUID('4', { message: 'receiverUserId must be a valid UUID' })
-  @IsNotEmpty({ message: 'receiverUserId is required for credit and transfer transactions' })
+  @IsNotEmpty({
+    message: 'receiverUserId is required for credit and transfer transactions',
+  })
   receiverUserId?: string;
 }

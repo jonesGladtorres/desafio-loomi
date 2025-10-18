@@ -32,7 +32,7 @@ interface UserBankingUpdatedEvent {
 @ApiTags('transactions')
 @Controller('api/transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(private readonly transactionsService: TransactionsService) { }
 
   // ========================================
   // HTTP Endpoints
@@ -138,13 +138,31 @@ export class TransactionsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Transação deletada com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Transação deletada com sucesso',
+        },
+        deletedTransactionId: {
+          type: 'string',
+          example: '987e6543-e21b-12d3-a456-426614174999',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Transação não encontrada',
   })
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(id);
+  async remove(@Param('id') id: string) {
+    const transaction = await this.transactionsService.remove(id);
+
+    return {
+      message: 'Transação deletada com sucesso',
+      deletedTransactionId: transaction.id,
+    };
   }
 
   // ========================================

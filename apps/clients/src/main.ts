@@ -17,11 +17,10 @@ async function bootstrap() {
 
   // Configuração do Swagger
   const config = new DocumentBuilder()
-    .setTitle('Loomi - Clients API')
-    .setDescription('API para gerenciamento de clientes e usuários')
+    .setTitle('Loomi - Users API')
+    .setDescription('API para gerenciamento de usuários')
     .setVersion('1.0')
-    .addTag('users', 'Endpoints relacionados a usuários')
-    .addTag('clients', 'Endpoints relacionados ao serviço de clientes')
+    .addTag('users', 'Operações de CRUD para gerenciamento de usuários')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -33,8 +32,11 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(process.env.port ?? 3001);
-  console.log(`🚀 Clients app is running on: http://localhost:3001`);
-  console.log(`📚 Swagger docs available at: http://localhost:3001/api/docs`);
+  const port = process.env.PORT ?? 3001;
+  await app.listen(port);
+  console.log(`🚀 Users app is running on: http://localhost:${port}`);
+  console.log(
+    `📚 Swagger docs available at: http://localhost:${port}/api/docs`,
+  );
 }
-bootstrap();
+void bootstrap();

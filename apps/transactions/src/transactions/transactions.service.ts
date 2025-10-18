@@ -110,7 +110,7 @@ export class TransactionsService {
         if (transaction.type === 'transfer') {
           // Notifica o remetente
           if (transaction.sender) {
-            await this.notificationService.sendTransactionSuccessNotification(
+            this.notificationService.sendTransactionSuccessNotification(
               transaction.sender.id,
               transaction.id,
               Number(transaction.amount),
@@ -120,21 +120,21 @@ export class TransactionsService {
 
           // Notifica o destinatário sobre a transferência recebida
           if (transaction.receiver && transaction.sender) {
-            await this.notificationService.sendTransferReceivedNotification(
+            this.notificationService.sendTransferReceivedNotification(
               transaction.receiver.id,
               transaction.sender.name,
               Number(transaction.amount),
             );
           }
         } else if (transaction.type === 'debit' && transaction.sender) {
-          await this.notificationService.sendTransactionSuccessNotification(
+          this.notificationService.sendTransactionSuccessNotification(
             transaction.sender.id,
             transaction.id,
             Number(transaction.amount),
             'debit',
           );
         } else if (transaction.type === 'credit' && transaction.receiver) {
-          await this.notificationService.sendTransactionSuccessNotification(
+          this.notificationService.sendTransactionSuccessNotification(
             transaction.receiver.id,
             transaction.id,
             Number(transaction.amount),
@@ -149,22 +149,26 @@ export class TransactionsService {
         // Log do erro mas não falha a transação
         this.logger.error(
           `❌ Erro ao enviar notificações para transação ${transaction.id}:`,
-          error,
+          (error as Error).message,
         );
       }
     } else if (transaction.status === 'failed') {
       // Notifica falha da transação
       try {
-        const userId = transaction.senderUserId || transaction.receiverUserId;
+        const userId =
+          transaction.senderUserId ?? transaction.receiverUserId ?? '';
         if (userId) {
-          await this.notificationService.sendTransactionFailureNotification(
+          this.notificationService.sendTransactionFailureNotification(
             userId,
             transaction.id,
             'Transaction failed',
           );
         }
       } catch (error) {
-        this.logger.error('Erro ao enviar notificação de falha:', error);
+        this.logger.error(
+          'Erro ao enviar notificação de falha:',
+          (error as Error).message,
+        );
       }
     }
 

@@ -1,0 +1,33 @@
+# Dockerfile para desenvolvimento com hot reload
+FROM node:20-alpine
+
+# Instalar dependências do sistema
+RUN apk add --no-cache wget
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar arquivos de dependências
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+
+# Instalar dependências
+RUN npm ci
+
+# Copiar código fonte
+COPY libs ./libs
+COPY prisma ./prisma
+COPY apps/clients ./apps/clients
+
+# Gerar Prisma Client
+RUN npx prisma generate
+
+# Instalar nodemon globalmente para hot reload
+RUN npm install -g nodemon
+
+# Expor porta
+EXPOSE 3001
+
+# Comando de desenvolvimento com hot reload
+CMD ["npm", "run", "start:clients:dev"]

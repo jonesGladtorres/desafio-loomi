@@ -19,14 +19,14 @@ import {
 } from '@nestjs/swagger';
 import { CACHE_MANAGER, CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
+import { UsersService } from './clients.service';
+import { CreateUserDto } from './dto/create-users.dto';
+import { UpdateUserDto } from './dto/update-users.dto';
 
 @ApiTags('users')
 @Controller('api/users')
-export class UsersController {
+export class ClientsController {
   constructor(
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -108,7 +108,7 @@ export class UsersController {
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(id, updateUserDto);
 
-    // Invalida o cache do usuário específico e da lista de usuários
+    // Invalida o cache do cliente específico e da lista de clientes
     await this.cacheManager.del(`/api/users/${id}`);
     await this.cacheManager.del('/api/users');
 
@@ -123,8 +123,21 @@ export class UsersController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.NO_CONTENT,
     description: 'Usuário deletado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuário deletado com sucesso',
+        },
+        deletedUserId: {
+          type: 'string',
+          example: '123e4567-e89b-12d3-a456-426614174000',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -133,17 +146,21 @@ export class UsersController {
   async remove(@Param('id') id: string) {
     const user = await this.usersService.remove(id);
 
-    // Invalida o cache do usuário específico e da lista de usuários
+    // Invalida o cache do cliente específico e da lista de clientes
     await this.cacheManager.del(`/api/users/${id}`);
     await this.cacheManager.del('/api/users');
 
-    return user;
+    return {
+      message: 'Usuário deletado com sucesso',
+      deletedUserId: user.id,
+    };
   }
 
   @Patch(':id/profile-picture')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Atualizar foto de perfil do usuário',
-    description: 'Atualiza apenas a foto de perfil do usuário. Aceita uma URL válida para a imagem.'
+    description:
+      'Atualiza apenas a foto de perfil do usuário. Aceita uma URL válida para a imagem.',
   })
   @ApiParam({
     name: 'id',
@@ -167,9 +184,12 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateProfilePictureDto: UpdateProfilePictureDto,
   ) {
-    const user = await this.usersService.updateProfilePicture(id, updateProfilePictureDto);
+    const user = await this.usersService.updateProfilePicture(
+      id,
+      updateProfilePictureDto,
+    );
 
-    // Invalida o cache do usuário específico
+    // Invalida o cache do cliente específico
     await this.cacheManager.del(`/api/users/${id}`);
     await this.cacheManager.del('/api/users');
 
@@ -179,7 +199,7 @@ export class UsersController {
         id: user.id,
         name: user.name,
         profilePicture: user.profilePicture,
-      }
+      },
     };
   }
 }

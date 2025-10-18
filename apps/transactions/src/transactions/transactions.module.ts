@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PrismaModule } from '@app/prisma';
 import { TransactionsService } from './transactions.service';
 import { TransactionsController } from './transactions.controller';
 import { NotificationService } from '../services/notification.service';
 
 @Module({
   imports: [
+    PrismaModule,
     ClientsModule.register([
       {
         name: 'RABBITMQ_SERVICE',

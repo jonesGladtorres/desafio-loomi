@@ -54,8 +54,11 @@ async function bootstrap() {
   console.log('🐰 RabbitMQ microservice is listening...');
 
   // Inicia o servidor HTTP
-  await app.listen(process.env.port ?? 3002);
-  console.log(`🚀 Transactions app is running on: http://localhost:3002`);
-  console.log(`📚 Swagger docs available at: http://localhost:3002/api/docs`);
+  const port = process.env.PORT ?? 3002;
+  await app.listen(port);
+  console.log(`🚀 Transactions app is running on: http://localhost:${port}`);
+  console.log(
+    `📚 Swagger docs available at: http://localhost:${port}/api/docs`,
+  );
 }
-bootstrap();
+void bootstrap();

@@ -16,7 +16,7 @@ Content-Type: {{contentType}}
 {
   "name": "João Silva",
   "email": "joao.silva@example.com",
-  "cpf": "123.456.789-00",
+  "cpf": "123.456.789-09",
   "phone": "(11) 98765-4321",
   "address": "Rua das Flores, 123",
   "city": "São Paulo",
@@ -105,6 +105,12 @@ Content-Type: {{contentType}}
 
 ### 9. Deletar um usuário
 DELETE {{baseUrl}}/{{userId}}
+
+# Resposta esperada:
+# {
+#   "message": "Usuário deletado com sucesso",
+#   "deletedUserId": "uuid-do-usuario-deletado"
+# }
 
 ###############################################
 # TESTES DE CACHE
@@ -205,7 +211,7 @@ Content-Type: {{contentType}}
 {
   "name": "Usuário Teste Eventos",
   "email": "eventos@example.com",
-  "cpf": "456.789.123-00",
+  "cpf": "456.789.123-64",
   "phone": "(31) 98765-4321",
   "bankAgency": "0003",
   "bankAccount": "67890",

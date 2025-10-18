@@ -59,12 +59,98 @@ services:
     networks:
       - loomi-network-dev
 
+  # Aplicação Clients (Development com Hot Reload)
+  clients-app-dev:
+    build:
+      context: .
+      dockerfile: apps/clients/Dockerfile.dev
+    container_name: loomi-clients-app-dev
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://loomi_user:loomi_password@postgres:5432/loomi_db?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://loomi_user:loomi_password@rabbitmq:5672
+    volumes:
+      # Sincroniza o código fonte para hot reload
+      - ./apps/clients:/app/apps/clients
+      - ./libs:/app/libs
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./nest-cli.json:/app/nest-cli.json
+      # Cache do node_modules para performance
+      - node_modules_dev:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - loomi-network-dev
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3001/api/users']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Aplicação Transactions (Development com Hot Reload)
+  transactions-app-dev:
+    build:
+      context: .
+      dockerfile: apps/transactions/Dockerfile.dev
+    container_name: loomi-transactions-app-dev
+    restart: unless-stopped
+    ports:
+      - '3002:3002'
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://loomi_user:loomi_password@postgres:5432/loomi_db?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://loomi_user:loomi_password@rabbitmq:5672
+    volumes:
+      # Sincroniza o código fonte para hot reload
+      - ./apps/transactions:/app/apps/transactions
+      - ./libs:/app/libs
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./nest-cli.json:/app/nest-cli.json
+      # Cache do node_modules para performance
+      - node_modules_dev:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - loomi-network-dev
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3002/api/transactions']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   postgres_data_dev:
     driver: local
   redis_data_dev:
     driver: local
   rabbitmq_data_dev:
+    driver: local
+  node_modules_dev:
     driver: local
 
 networks:
