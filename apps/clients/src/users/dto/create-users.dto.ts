@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsCPF } from '../validators/cpf.validator';
 
@@ -21,7 +27,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'CPF do usuário (único, opcional)',
-    example: '123.456.789-00',
+    example: '123.456.789-09',
     required: false,
   })
   @IsString()
@@ -88,7 +94,8 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   @Matches(/^\d{4}(-\d)?$/, {
-    message: 'Agência deve conter 4 dígitos, opcionalmente com dígito verificador (XXXX ou XXXX-X)',
+    message:
+      'Agência deve conter 4 dígitos, opcionalmente com dígito verificador (XXXX ou XXXX-X)',
   })
   bankAgency?: string;
 

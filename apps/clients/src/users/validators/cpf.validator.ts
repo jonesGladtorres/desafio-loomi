@@ -1,7 +1,6 @@
 import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationArguments,
   registerDecorator,
   ValidationOptions,
 } from 'class-validator';
@@ -11,7 +10,7 @@ import {
  */
 @ValidatorConstraint({ name: 'isCPF', async: false })
 export class IsCPFConstraint implements ValidatorConstraintInterface {
-  validate(cpf: string, args: ValidationArguments) {
+  validate(cpf: string) {
     if (!cpf) return true; // CPF é opcional
 
     // Remove caracteres não numéricos
@@ -33,7 +32,7 @@ export class IsCPFConstraint implements ValidatorConstraintInterface {
       soma += parseInt(cleanCPF.charAt(i)) * (10 - i);
     }
     let resto = 11 - (soma % 11);
-    let digito1 = resto === 10 || resto === 11 ? 0 : resto;
+    const digito1 = resto === 10 || resto === 11 ? 0 : resto;
 
     if (digito1 !== parseInt(cleanCPF.charAt(9))) {
       return false;
@@ -45,7 +44,7 @@ export class IsCPFConstraint implements ValidatorConstraintInterface {
       soma += parseInt(cleanCPF.charAt(i)) * (11 - i);
     }
     resto = 11 - (soma % 11);
-    let digito2 = resto === 10 || resto === 11 ? 0 : resto;
+    const digito2 = resto === 10 || resto === 11 ? 0 : resto;
 
     if (digito2 !== parseInt(cleanCPF.charAt(10))) {
       return false;
@@ -54,8 +53,8 @@ export class IsCPFConstraint implements ValidatorConstraintInterface {
     return true;
   }
 
-  defaultMessage(args: ValidationArguments) {
-    return 'CPF inválido. Por favor, insira um CPF válido no formato XXX.XXX.XXX-XX ou apenas números.';
+  defaultMessage() {
+    return 'CPF inválido. Verifique se os dígitos verificadores estão corretos.';
   }
 }
 
@@ -63,7 +62,7 @@ export class IsCPFConstraint implements ValidatorConstraintInterface {
  * Decorator para validar CPF
  */
 export function IsCPF(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
@@ -79,17 +78,14 @@ export function IsCPF(validationOptions?: ValidationOptions) {
  */
 export function formatCPF(cpf: string): string {
   if (!cpf) return cpf;
-  
+
   const cleanCPF = cpf.replace(/[^\d]/g, '');
-  
+
   if (cleanCPF.length !== 11) {
     return cpf;
   }
 
-  return cleanCPF.replace(
-    /(\d{3})(\d{3})(\d{3})(\d{2})/,
-    '$1.$2.$3-$4'
-  );
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
 /**
@@ -98,4 +94,32 @@ export function formatCPF(cpf: string): string {
 export function cleanCPF(cpf: string): string {
   if (!cpf) return cpf;
   return cpf.replace(/[^\d]/g, '');
+}
+
+/**
+ * Gera um CPF válido para testes (baseado nos primeiros 9 dígitos)
+ */
+export function generateValidCPF(base: string = '123456789'): string {
+  if (base.length !== 9) {
+    throw new Error('Base deve ter exatamente 9 dígitos');
+  }
+
+  // Calcula o primeiro dígito verificador
+  let soma = 0;
+  for (let i = 0; i < 9; i++) {
+    soma += parseInt(base.charAt(i)) * (10 - i);
+  }
+  let resto = 11 - (soma % 11);
+  const digito1 = resto === 10 || resto === 11 ? 0 : resto;
+
+  // Calcula o segundo dígito verificador
+  soma = 0;
+  for (let i = 0; i < 9; i++) {
+    soma += parseInt(base.charAt(i)) * (11 - i);
+  }
+  soma += digito1 * 2;
+  resto = 11 - (soma % 11);
+  const digito2 = resto === 10 || resto === 11 ? 0 : resto;
+
+  return base + digito1 + digito2;
 }

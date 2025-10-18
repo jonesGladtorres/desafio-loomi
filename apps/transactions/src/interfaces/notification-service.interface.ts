@@ -1,6 +1,6 @@
 /**
  * Interface abstrata para o Microsserviço de Notificações
- * 
+ *
  * Este é um contrato hipotético para simular a comunicação
  * com um microsserviço de notificações que poderia existir
  * em um ambiente distribuído real.
@@ -19,7 +19,7 @@ export interface INotificationService {
     transactionId: string,
     amount: number,
     type: string,
-  ): Promise<void>;
+  );
 
   /**
    * Envia uma notificação de falha na transação
@@ -31,7 +31,7 @@ export interface INotificationService {
     userId: string,
     transactionId: string,
     reason: string,
-  ): Promise<void>;
+  );
 
   /**
    * Envia uma notificação de transferência recebida
@@ -43,7 +43,7 @@ export interface INotificationService {
     receiverId: string,
     senderName: string,
     amount: number,
-  ): Promise<void>;
+  );
 
   /**
    * Envia um e-mail de confirmação de transação
@@ -53,7 +53,7 @@ export interface INotificationService {
   sendTransactionEmail(
     email: string,
     transactionDetails: TransactionEmailDetails,
-  ): Promise<void>;
+  );
 
   /**
    * Envia notificação push para o aplicativo móvel
@@ -61,18 +61,14 @@ export interface INotificationService {
    * @param title - Título da notificação
    * @param message - Mensagem da notificação
    */
-  sendPushNotification(
-    deviceToken: string,
-    title: string,
-    message: string,
-  ): Promise<void>;
+  sendPushNotification(deviceToken: string, title: string, message: string);
 
   /**
    * Envia SMS de confirmação
    * @param phoneNumber - Número de telefone
    * @param message - Mensagem SMS
    */
-  sendSMSNotification(phoneNumber: string, message: string): Promise<void>;
+  sendSMSNotification(phoneNumber: string, message: string);
 }
 
 export interface TransactionEmailDetails {

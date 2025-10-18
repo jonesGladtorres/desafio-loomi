@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '@app/prisma';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
+import { CreateUserDto } from './dto/create-users.dto';
+import { UpdateUserDto } from './dto/update-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -45,7 +45,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     // Verifica se o usuário existe antes de atualizar
-    const existingUser = await this.findOne(id);
+    await this.findOne(id);
 
     // Atualiza o usuário
     const updatedUser = await this.prisma.user.update({
@@ -89,7 +89,10 @@ export class UsersService {
     });
   }
 
-  async updateProfilePicture(id: string, updateProfilePictureDto: UpdateProfilePictureDto) {
+  async updateProfilePicture(
+    id: string,
+    updateProfilePictureDto: UpdateProfilePictureDto,
+  ) {
     // Verifica se o usuário existe antes de atualizar
     await this.findOne(id);
 

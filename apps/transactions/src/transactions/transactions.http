@@ -129,6 +129,12 @@ Content-Type: {{contentType}}
 ### 11. Deletar uma transação
 DELETE {{baseUrl}}/{{transactionId}}
 
+# Resposta esperada:
+# {
+#   "message": "Transação deletada com sucesso",
+#   "deletedTransactionId": "uuid-da-transacao-deletada"
+# }
+
 ###############################################
 # TESTES DE VALIDAÇÃO
 ###############################################

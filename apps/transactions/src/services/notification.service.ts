@@ -9,10 +9,10 @@ import {
 
 /**
  * Implementação Mock do Serviço de Notificações
- * 
+ *
  * Esta é uma implementação simulada do serviço de notificações
  * que seria um microsserviço separado em produção.
- * 
+ *
  * Em um ambiente real, este serviço comunicaria via RabbitMQ/Kafka
  * com o microsserviço de notificações real.
  */
@@ -24,12 +24,12 @@ export class NotificationService implements INotificationService {
     @Inject('RABBITMQ_SERVICE') private readonly rabbitClient: ClientProxy,
   ) {}
 
-  async sendTransactionSuccessNotification(
+  sendTransactionSuccessNotification(
     userId: string,
     transactionId: string,
     amount: number,
     type: string,
-  ): Promise<void> {
+  ) {
     this.logger.log(
       `📧 [MOCK] Enviando notificação de sucesso para usuário ${userId}`,
     );
@@ -47,17 +47,15 @@ export class NotificationService implements INotificationService {
     });
   }
 
-  async sendTransactionFailureNotification(
+  sendTransactionFailureNotification(
     userId: string,
     transactionId: string,
     reason: string,
-  ): Promise<void> {
+  ) {
     this.logger.warn(
       `📧 [MOCK] Enviando notificação de falha para usuário ${userId}`,
     );
-    this.logger.warn(
-      `   Transação: ${transactionId} | Motivo: ${reason}`,
-    );
+    this.logger.warn(`   Transação: ${transactionId} | Motivo: ${reason}`);
 
     // Em produção, isso enviaria uma mensagem para o microsserviço de notificações
     this.rabbitClient.emit('notification.transaction.failure', {
@@ -68,17 +66,15 @@ export class NotificationService implements INotificationService {
     });
   }
 
-  async sendTransferReceivedNotification(
+  sendTransferReceivedNotification(
     receiverId: string,
     senderName: string,
     amount: number,
-  ): Promise<void> {
+  ) {
     this.logger.log(
       `📧 [MOCK] Notificação de transferência recebida para usuário ${receiverId}`,
     );
-    this.logger.log(
-      `   De: ${senderName} | Valor: R$ ${amount}`,
-    );
+    this.logger.log(`   De: ${senderName} | Valor: R$ ${amount}`);
 
     // Em produção, isso enviaria uma mensagem para o microsserviço de notificações
     this.rabbitClient.emit('notification.transfer.received', {
@@ -89,16 +85,12 @@ export class NotificationService implements INotificationService {
     });
   }
 
-  async sendTransactionEmail(
+  sendTransactionEmail(
     email: string,
     transactionDetails: TransactionEmailDetails,
-  ): Promise<void> {
-    this.logger.log(
-      `📧 [MOCK] Enviando e-mail de transação para: ${email}`,
-    );
-    this.logger.log(
-      `   Detalhes: ${JSON.stringify(transactionDetails)}`,
-    );
+  ) {
+    this.logger.log(`📧 [MOCK] Enviando e-mail de transação para: ${email}`);
+    this.logger.log(`   Detalhes: ${JSON.stringify(transactionDetails)}`);
 
     // Em produção, isso enviaria uma mensagem para o microsserviço de notificações
     this.rabbitClient.emit('notification.email.transaction', {
@@ -108,17 +100,11 @@ export class NotificationService implements INotificationService {
     });
   }
 
-  async sendPushNotification(
-    deviceToken: string,
-    title: string,
-    message: string,
-  ): Promise<void> {
+  sendPushNotification(deviceToken: string, title: string, message: string) {
     this.logger.log(
       `📱 [MOCK] Enviando notificação push para dispositivo: ${deviceToken}`,
     );
-    this.logger.log(
-      `   Título: ${title} | Mensagem: ${message}`,
-    );
+    this.logger.log(`   Título: ${title} | Mensagem: ${message}`);
 
     // Em produção, isso enviaria uma mensagem para o microsserviço de notificações
     this.rabbitClient.emit('notification.push.send', {
@@ -129,16 +115,9 @@ export class NotificationService implements INotificationService {
     });
   }
 
-  async sendSMSNotification(
-    phoneNumber: string,
-    message: string,
-  ): Promise<void> {
-    this.logger.log(
-      `📱 [MOCK] Enviando SMS para: ${phoneNumber}`,
-    );
-    this.logger.log(
-      `   Mensagem: ${message}`,
-    );
+  sendSMSNotification(phoneNumber: string, message: string) {
+    this.logger.log(`📱 [MOCK] Enviando SMS para: ${phoneNumber}`);
+    this.logger.log(`   Mensagem: ${message}`);
 
     // Em produção, isso enviaria uma mensagem para o microsserviço de notificações
     this.rabbitClient.emit('notification.sms.send', {
