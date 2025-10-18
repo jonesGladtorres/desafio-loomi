@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ClientsController } from './clients.controller';
 import { UsersService } from './clients.service';
+import { IsCPFConstraint } from './validators/cpf.validator';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { UsersService } from './clients.service';
     ]),
   ],
   controllers: [ClientsController],
-  providers: [UsersService],
+  providers: [UsersService, IsCPFConstraint],
 })
 export class UsersModule { }

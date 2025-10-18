@@ -9,6 +9,8 @@ import {
   UseInterceptors,
   Inject,
   HttpStatus,
+  BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -23,6 +25,7 @@ import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
 import { UsersService } from './clients.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
+import { ParseUUIDPipe } from '../../../../libs/common/pipes/uuid-validation.pipe';
 
 @ApiTags('users')
 @Controller('api/users')
@@ -30,9 +33,10 @@ export class ClientsController {
   constructor(
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Criar novo usuário' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
@@ -44,6 +48,10 @@ export class ClientsController {
     description: 'Dados inválidos',
   })
   async create(@Body() createUserDto: CreateUserDto) {
+    if (!createUserDto || Object.keys(createUserDto).length === 0) {
+      throw new BadRequestException('Corpo da requisição não pode estar vazio');
+    }
+
     const user = await this.usersService.create(createUserDto);
     // Invalida o cache da lista de usuários
     await this.cacheManager.del('/api/users');
@@ -76,8 +84,12 @@ export class ClientsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Usuário não encontrado',
   })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'ID inválido',
+  })
   @UseInterceptors(CacheInterceptor)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
 
@@ -103,9 +115,16 @@ export class ClientsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Dados inválidos',
+    description: 'Dados inválidos ou ID inválido',
   })
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    if (!updateUserDto || Object.keys(updateUserDto).length === 0) {
+      throw new BadRequestException('Corpo da requisição não pode estar vazio');
+    }
+
     const user = await this.usersService.update(id, updateUserDto);
 
     // Invalida o cache do cliente específico e da lista de clientes
@@ -116,6 +135,7 @@ export class ClientsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Deletar usuário' })
   @ApiParam({
     name: 'id',
@@ -123,7 +143,7 @@ export class ClientsController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: 'Usuário deletado com sucesso',
     schema: {
       type: 'object',
@@ -143,7 +163,11 @@ export class ClientsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Usuário não encontrado',
   })
-  async remove(@Param('id') id: string) {
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'ID inválido',
+  })
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.usersService.remove(id);
 
     // Invalida o cache do cliente específico e da lista de clientes
@@ -178,12 +202,19 @@ export class ClientsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'URL inválida para foto de perfil',
+    description: 'URL inválida para foto de perfil ou ID inválido',
   })
   async updateProfilePicture(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProfilePictureDto: UpdateProfilePictureDto,
   ) {
+    if (
+      !updateProfilePictureDto ||
+      Object.keys(updateProfilePictureDto).length === 0
+    ) {
+      throw new BadRequestException('Corpo da requisição não pode estar vazio');
+    }
+
     const user = await this.usersService.updateProfilePicture(
       id,
       updateProfilePictureDto,

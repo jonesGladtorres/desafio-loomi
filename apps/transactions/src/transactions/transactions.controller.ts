@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpStatus,
+  BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +21,7 @@ import { EventPattern, Payload } from '@nestjs/microservices';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { ParseUUIDPipe } from '../../../../libs/common/pipes/uuid-validation.pipe';
 
 interface UserBankingUpdatedEvent {
   userId: string;
@@ -32,13 +35,14 @@ interface UserBankingUpdatedEvent {
 @ApiTags('transactions')
 @Controller('api/transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) { }
+  constructor(private readonly transactionsService: TransactionsService) {}
 
   // ========================================
   // HTTP Endpoints
   // ========================================
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Criar nova transação' })
   @ApiBody({ type: CreateTransactionDto })
   @ApiResponse({
@@ -50,6 +54,12 @@ export class TransactionsController {
     description: 'Dados inválidos ou usuário não encontrado',
   })
   create(@Body() createTransactionDto: CreateTransactionDto) {
+    if (
+      !createTransactionDto ||
+      Object.keys(createTransactionDto).length === 0
+    ) {
+      throw new BadRequestException('Corpo da requisição não pode estar vazio');
+    }
     return this.transactionsService.create(createTransactionDto);
   }
 
@@ -78,7 +88,11 @@ export class TransactionsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Usuário não encontrado',
   })
-  findByUserId(@Param('userId') userId: string) {
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'ID de usuário inválido',
+  })
+  findByUserId(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.transactionsService.findByUserId(userId);
   }
 
@@ -97,7 +111,11 @@ export class TransactionsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Transação não encontrada',
   })
-  findOne(@Param('id') id: string) {
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'ID inválido',
+  })
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.transactionsService.findOne(id);
   }
 
@@ -119,16 +137,23 @@ export class TransactionsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Dados inválidos',
+    description: 'Dados inválidos ou ID inválido',
   })
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
+    if (
+      !updateTransactionDto ||
+      Object.keys(updateTransactionDto).length === 0
+    ) {
+      throw new BadRequestException('Corpo da requisição não pode estar vazio');
+    }
     return this.transactionsService.update(id, updateTransactionDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Deletar transação' })
   @ApiParam({
     name: 'id',
@@ -156,7 +181,11 @@ export class TransactionsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Transação não encontrada',
   })
-  async remove(@Param('id') id: string) {
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'ID inválido',
+  })
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     const transaction = await this.transactionsService.remove(id);
 
     return {

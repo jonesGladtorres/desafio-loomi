@@ -5,7 +5,7 @@ import { ClientsService } from './clients.service';
 @ApiTags('health')
 @Controller()
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) { }
+  constructor(private readonly clientsService: ClientsService) {}
 
   @Get()
   @ApiOperation({ summary: 'Health check do serviço' })
