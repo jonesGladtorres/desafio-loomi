@@ -49,6 +49,13 @@ help:
 	@echo "  make lint               - Lint e fix"
 	@echo "  make format             - Formatar código"
 	@echo ""
+	@echo "🐰 RabbitMQ"
+	@echo "  make rabbitmq-status    - Status do RabbitMQ"
+	@echo "  make rabbitmq-logs      - Logs de eventos"
+	@echo "  make rabbitmq-monitor   - Monitoramento em tempo real"
+	@echo "  make rabbitmq-ui        - Abrir interface web"
+	@echo "  make rabbitmq-test      - Teste completo de mensageria"
+	@echo ""
 
 # Setup
 setup:
@@ -162,4 +169,24 @@ lint:
 
 format:
 	@npm run format
+
+# RabbitMQ
+rabbitmq-status:
+	@bash scripts/monitor-rabbitmq.sh status
+
+rabbitmq-logs:
+	@bash scripts/monitor-rabbitmq.sh logs
+
+rabbitmq-monitor:
+	@bash scripts/monitor-rabbitmq.sh monitor
+
+rabbitmq-ui:
+	@echo "🌐 Abrindo RabbitMQ Management UI..."
+	@echo "   URL: http://localhost:15672"
+	@echo "   Usuário: loomi_user"
+	@echo "   Senha: loomi_password"
+	@open http://localhost:15672 2>/dev/null || xdg-open http://localhost:15672 2>/dev/null || echo "Abra manualmente: http://localhost:15672"
+
+rabbitmq-test:
+	@bash scripts/test-rabbitmq.sh
 
