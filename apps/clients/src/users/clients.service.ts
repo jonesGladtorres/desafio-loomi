@@ -1,21 +1,74 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  ConflictException,
+  BadRequestException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '@app/prisma';
 import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     @Inject('RABBITMQ_SERVICE') private readonly rabbitClient: ClientProxy,
   ) { }
 
   async create(createUserDto: CreateUserDto) {
-    return this.prisma.user.create({
-      data: createUserDto,
-    });
+    try {
+      this.logger.log('Tentando criar usuário com dados:', {
+        name: createUserDto.name,
+        email: createUserDto.email,
+        cpf: createUserDto.cpf,
+      });
+
+      const user = await this.prisma.user.create({
+        data: createUserDto,
+      });
+
+      this.logger.log(`Usuário criado com sucesso: ${user.id}`);
+      return user;
+    } catch (error) {
+      this.logger.error('Erro ao criar usuário:', error);
+
+      // Trata erros do Prisma
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // Erro de campo único (email ou CPF duplicado)
+        if (error.code === 'P2002') {
+          const fields = (error.meta?.target as string[]) || [];
+          const fieldName = fields[0] || 'campo';
+          throw new ConflictException(
+            `Já existe um usuário com este ${fieldName}`,
+          );
+        }
+
+        // Erro de validação de dados
+        if (error.code === 'P2000') {
+          throw new BadRequestException(
+            'Dados fornecidos são inválidos ou muito longos',
+          );
+        }
+
+        // Erro de campo obrigatório faltando
+        if (error.code === 'P2011') {
+          throw new BadRequestException('Campo obrigatório não foi fornecido');
+        }
+      }
+
+      // Se não for erro conhecido do Prisma, lança erro genérico
+      throw new InternalServerErrorException(
+        `Erro ao criar usuário: ${error.message}`,
+      );
+    }
   }
 
   async findAll() {
