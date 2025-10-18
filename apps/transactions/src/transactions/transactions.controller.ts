@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   HttpStatus,
 } from '@nestjs/common';
 import {
@@ -15,7 +14,6 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { TransactionsService } from './transactions.service';
@@ -34,7 +32,7 @@ interface UserBankingUpdatedEvent {
 @ApiTags('transactions')
 @Controller('api/transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) { }
+  constructor(private readonly transactionsService: TransactionsService) {}
 
   // ========================================
   // HTTP Endpoints
@@ -183,7 +181,10 @@ export class TransactionsController {
       // - Atualizar cache
       // - Disparar outros eventos
     } catch (error) {
-      console.error('❌ Erro ao processar evento:', error.message);
+      console.error(
+        '❌ Erro ao processar evento:',
+        (error as Error & { message: string }).message,
+      );
     }
   }
 }

@@ -15,20 +15,30 @@ datasource db {
 
 // Modelo User para o serviço de clientes
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  cpf       String?  @unique
-  phone     String?
-  address   String?
-  city      String?
-  state     String?
-  zipCode   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  cpf             String?  @unique
+  phone           String?
+  address         String?
+  city            String?
+  state           String?
+  zipCode         String?
+  
+  // Dados bancários
+  bankAgency      String?  @map("bank_agency")
+  bankAccount     String?  @map("bank_account")
+  bankAccountDigit String? @map("bank_account_digit")
+  
+  // Dados de perfil
+  profilePicture  String?  @map("profile_picture")
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relacionamento com transações
-  transactions Transaction[]
+  sentTransactions     Transaction[] @relation("SenderTransactions")
+  receivedTransactions Transaction[] @relation("ReceiverTransactions")
 
   @@map("users")
 }
@@ -37,17 +47,23 @@ model User {
 model Transaction {
   id          String   @id @default(uuid())
   amount      Decimal  @db.Decimal(10, 2)
-  type        String // Ex: "credit", "debit", "transfer"
+  type        String   // Ex: "credit", "debit", "transfer"
   description String?
   status      String   @default("pending") // Ex: "pending", "completed", "failed", "cancelled"
-  userId      String
+  
+  // Usuários envolvidos na transação
+  senderUserId   String?  @map("sender_user_id")
+  receiverUserId String?  @map("receiver_user_id")
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relacionamento com usuário
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relacionamentos com usuários
+  sender   User? @relation("SenderTransactions", fields: [senderUserId], references: [id], onDelete: Cascade)
+  receiver User? @relation("ReceiverTransactions", fields: [receiverUserId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([senderUserId])
+  @@index([receiverUserId])
   @@index([status])
   @@index([createdAt])
   @@map("transactions")
