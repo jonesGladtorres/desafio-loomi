@@ -38,10 +38,10 @@ Este projeto implementa uma solução de microserviços para gestão de clientes
 │           │                            │                    │
 │           ├────────────┬───────────────┤                    │
 │           │            │               │                    │
-│      ┌────▼────┐  ┌───▼────┐     ┌───▼─────┐                │
+│      ┌────▼─────┐  ┌───▼────┐     ┌───▼─────┐               │
 │      │PostgreSQL│  │ Redis  │     │RabbitMQ │               │
-│      │(5432)   │  │ (6379) │     │(5672)   │                │
-│      └─────────┘  └────────┘     └─────────┘                │
+│      │(5432)    │  │ (6379) │     │(5672)   │               │
+│      └──────────┘  └────────┘     └─────────┘               │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -106,8 +106,8 @@ Após executar o comando, você verá uma mensagem similar a:
    → Transactions API .... http://localhost:3002/api/transactions
 
 📚 Documentação Swagger:
-   → Clients API ......... http://localhost:3001/api/docs
-   → Transactions API .... http://localhost:3002/api/docs
+   → Clients API ......... http://localhost:3001/api/docs/users
+   → Transactions API .... http://localhost:3002/api/docs/transactions
 
 🔧 Infraestrutura:
    → PostgreSQL .......... localhost:5432 (loomi_user/loomi_password)
@@ -129,8 +129,69 @@ Após executar o comando, você verá uma mensagem similar a:
 
 Após iniciar os serviços, a documentação Swagger estará disponível em:
 
-- **Clients API:** http://localhost:3001/api/docs
-- **Transactions API:** http://localhost:3002/api/docs
+- **Clients API:** http://localhost:3001/api/docs/users
+- **Transactions API:** http://localhost:3002/api/docs/transactions
+
+### 🎯 Como usar o Swagger
+
+A documentação Swagger agora inclui:
+- ✅ Autenticação integrada (X-API-Key e Bearer)
+- ✅ Descrições detalhadas de cada endpoint
+- ✅ Exemplos de requisições e respostas
+- ✅ Informações sobre rate limiting e segurança
+- ✅ Schemas interativos com validações
+
+**📖 Guia completo:** [Como usar o Swagger](docs/SWAGGER_GUIDE.md)
+
+## 🔒 Segurança
+
+O projeto implementa múltiplas camadas de segurança:
+
+### Funcionalidades de Segurança
+
+- ✅ **Helmet**: Headers HTTP seguros (CSP, HSTS, XSS Protection)
+- ✅ **CORS**: Controle de acesso de origens
+- ✅ **Rate Limiting**: Proteção contra DDoS (10/seg, 100/min, 1000/hora)
+- ✅ **API Key Authentication**: Controle de acesso via chave de API
+- ✅ **Input Sanitization**: Limpeza automática de dados
+- ✅ **Security Logging**: Auditoria completa de requisições
+- ✅ **Validation**: Validação estrita de DTOs
+
+### Usando API Key
+
+```bash
+# Todas as requisições requerem API Key (exceto rotas marcadas como @Public())
+
+# Desenvolvimento - API Keys
+loomi-dev-key-123
+loomi-dev-key-456
+
+# Exemplo de uso
+curl -H "X-API-Key: loomi-dev-key-123" http://localhost:3001/api/users
+```
+
+### Testes de Segurança
+
+**⚠️ IMPORTANTE:** Antes de executar os testes, certifique-se de que as migrations foram aplicadas:
+
+```bash
+# 1. Aplicar migrations no banco de dados
+docker exec loomi-clients-app npx prisma migrate deploy
+
+# 2. Executar suite completa de testes de segurança
+npm run test:security
+
+# 3. Testar na AWS (se aplicável)
+v
+```
+
+**Nota:** Os testes incluem verificação de rate limiting, portanto o script aguarda 60 segundos entre alguns testes para garantir resultados precisos.
+
+### Documentação Completa
+
+- 📖 [Como usar o Swagger](docs/SWAGGER_GUIDE.md)
+- 📖 [Guia Completo de Segurança](docs/SECURITY.md)
+- 📖 [Troubleshooting de Testes](docs/TROUBLESHOOTING_TESTS.md)
 
 ## 🔌 Endpoints Principais
 
@@ -141,7 +202,6 @@ Após iniciar os serviços, a documentação Swagger estará disponível em:
 | POST | `/api/users` | Criar novo cliente |
 | GET | `/api/users` | Listar todos os clientes |
 | GET | `/api/users/:id` | Buscar cliente por ID |
-| GET | `/api/users/cpf/:cpf` | Buscar cliente por CPF |
 | PATCH | `/api/users/:id` | Atualizar dados do cliente |
 | PATCH | `/api/users/:id/profile-picture` | Atualizar foto de perfil |
 | DELETE | `/api/users/:id` | Excluir cliente |
@@ -168,10 +228,49 @@ Após iniciar os serviços, a documentação Swagger estará disponível em:
 | Clients API | 3001 | - |
 | Transactions API | 3002 | - |
 
+## ☁️ Deploy na AWS
+
+### 🚀 Quick Start AWS
+
+Para fazer deploy completo na AWS (ECS Fargate + RDS + ElastiCache + Amazon MQ):
+
+```bash
+# 1. Configurar credenciais AWS
+aws configure
+
+# 2. Configurar variáveis
+cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+nano terraform/terraform.tfvars  # Altere as senhas!
+
+# 3. Deploy completo
+npm run aws:deploy
+```
+
+**Tempo estimado**: 15-20 minutos  
+**Custo estimado**: ~$170/mês
+
+### Scripts AWS Disponíveis
+
+```bash
+# Deploy e Atualizações
+npm run aws:deploy              # Deploy completo
+npm run aws:update              # Atualizar apenas código
+npm run aws:update:clients      # Atualizar só Clients
+npm run aws:update:transactions # Atualizar só Transactions
+
+# Monitoramento
+npm run aws:status              # Status dos serviços
+npm run aws:logs:clients        # Logs do Clients
+npm run aws:logs:transactions   # Logs do Transactions
+
+# Destruir infraestrutura
+npm run aws:destroy             # ⚠️ Remove tudo da AWS
+```
+
 ## 🎯 Scripts NPM Disponíveis
 
 ```bash
-# Docker
+# Docker (Desenvolvimento Local)
 npm run docker:start      # Iniciar todos os serviços
 npm run docker:stop       # Parar todos os serviços
 npm run docker:restart    # Reiniciar os serviços

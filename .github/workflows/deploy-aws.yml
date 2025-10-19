@@ -1,0 +1,127 @@
+name: Deploy to AWS ECS
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  ENVIRONMENT: production
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Executar testes
+        run: npm test
+
+      - name: Executar coverage
+        run: npm run test:cov
+
+  build-and-deploy:
+    name: Build and Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: test
+    
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login no Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Obter informações do Terraform
+        id: terraform-output
+        run: |
+          cd terraform
+          terraform init
+          echo "clients_repo=$(terraform output -raw ecr_clients_repository_url)" >> $GITHUB_OUTPUT
+          echo "transactions_repo=$(terraform output -raw ecr_transactions_repository_url)" >> $GITHUB_OUTPUT
+          echo "ecs_cluster=$(terraform output -raw ecs_cluster_name)" >> $GITHUB_OUTPUT
+
+      - name: Build, tag e push - Clients API
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.terraform-output.outputs.clients_repo }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG -f apps/clients/Dockerfile .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REPOSITORY:latest
+          docker push $ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REPOSITORY:latest
+
+      - name: Build, tag e push - Transactions API
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.terraform-output.outputs.transactions_repo }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG -f apps/transactions/Dockerfile .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REPOSITORY:latest
+          docker push $ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REPOSITORY:latest
+
+      - name: Deploy Clients Service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ steps.terraform-output.outputs.ecs_cluster }} \
+            --service loomi-${{ env.ENVIRONMENT }}-clients-service \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy Transactions Service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ steps.terraform-output.outputs.ecs_cluster }} \
+            --service loomi-${{ env.ENVIRONMENT }}-transactions-service \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Aguardar serviços estabilizarem
+        run: |
+          echo "Aguardando Clients Service..."
+          aws ecs wait services-stable \
+            --cluster ${{ steps.terraform-output.outputs.ecs_cluster }} \
+            --services loomi-${{ env.ENVIRONMENT }}-clients-service \
+            --region ${{ env.AWS_REGION }}
+          
+          echo "Aguardando Transactions Service..."
+          aws ecs wait services-stable \
+            --cluster ${{ steps.terraform-output.outputs.ecs_cluster }} \
+            --services loomi-${{ env.ENVIRONMENT }}-transactions-service \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Notificar sucesso
+        if: success()
+        run: |
+          echo "✅ Deploy concluído com sucesso!"
+          echo "🚀 Aplicação atualizada na AWS"
+

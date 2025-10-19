@@ -3,9 +3,11 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { PrismaModule } from '@app/prisma';
 import * as redisStore from 'cache-manager-redis-store';
 import { UsersModule } from './users/clients.module';
+import { SecurityModule } from '@app/security';
 
 @Module({
   imports: [
+    SecurityModule, // Módulo de Segurança Global
     CacheModule.register({
       isGlobal: true,
       store: redisStore,
@@ -19,4 +21,4 @@ import { UsersModule } from './users/clients.module';
   controllers: [],
   providers: [],
 })
-export class ClientsModule {}
+export class ClientsModule { }
