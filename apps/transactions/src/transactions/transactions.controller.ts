@@ -16,12 +16,14 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { ParseUUIDPipe } from '../../../../libs/common/pipes/uuid-validation.pipe';
+import { Public } from '@app/security/decorators/public.decorator';
 
 interface UserBankingUpdatedEvent {
   userId: string;
@@ -33,6 +35,8 @@ interface UserBankingUpdatedEvent {
 }
 
 @ApiTags('transactions')
+@ApiSecurity('X-API-Key')
+@ApiSecurity('Bearer')
 @Controller('api/transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
@@ -41,9 +45,39 @@ export class TransactionsController {
   // HTTP Endpoints
   // ========================================
 
+  @Get('health')
+  @Public()
+  @ApiOperation({
+    summary: 'Health Check',
+    description: 'Endpoint público para verificar se a API está funcionando. Não requer autenticação.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'API está funcionando corretamente',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'ok' },
+        timestamp: { type: 'string', example: '2025-10-19T06:30:00.000Z' },
+        service: { type: 'string', example: 'transactions-api' },
+      },
+    },
+  })
+  health() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'transactions-api',
+    };
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Criar nova transação' })
+  @ApiOperation({
+    summary: 'Criar nova transação',
+    description:
+      'Cria uma nova transação financeira (CREDIT, DEBIT ou TRANSFER). Valida saldos e envia notificações via RabbitMQ. Requer autenticação via API Key.',
+  })
   @ApiBody({ type: CreateTransactionDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -51,7 +85,16 @@ export class TransactionsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Dados inválidos ou usuário não encontrado',
+    description:
+      'Dados inválidos, usuário não encontrado ou saldo insuficiente',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'API Key não fornecida ou inválida',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Muitas requisições - Rate limit excedido',
   })
   create(@Body() createTransactionDto: CreateTransactionDto) {
     if (
@@ -64,10 +107,22 @@ export class TransactionsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todas as transações' })
+  @ApiOperation({
+    summary: 'Listar todas as transações',
+    description:
+      'Retorna todas as transações do sistema incluindo informações dos usuários envolvidos. Requer autenticação via API Key.',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Lista de transações retornada com sucesso',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'API Key não fornecida ou inválida',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Muitas requisições - Rate limit excedido',
   })
   findAll() {
     return this.transactionsService.findAll();

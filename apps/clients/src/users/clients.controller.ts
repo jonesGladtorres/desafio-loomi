@@ -18,6 +18,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { CACHE_MANAGER, CacheInterceptor } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -26,18 +27,51 @@ import { UsersService } from './clients.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
 import { ParseUUIDPipe } from '../../../../libs/common/pipes/uuid-validation.pipe';
+import { Public } from '@app/security/decorators/public.decorator';
 
 @ApiTags('users')
+@ApiSecurity('X-API-Key')
+@ApiSecurity('Bearer')
 @Controller('api/users')
 export class ClientsController {
   constructor(
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
+
+  @Get('health')
+  @Public()
+  @ApiOperation({
+    summary: 'Health Check',
+    description: 'Endpoint público para verificar se a API está funcionando. Não requer autenticação.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'API está funcionando corretamente',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'ok' },
+        timestamp: { type: 'string', example: '2025-10-19T06:30:00.000Z' },
+        service: { type: 'string', example: 'clients-api' },
+      },
+    },
+  })
+  health() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'clients-api',
+    };
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Criar novo usuário' })
+  @ApiOperation({
+    summary: 'Criar novo usuário',
+    description:
+      'Cria um novo usuário no sistema com validação de CPF e dados bancários. Requer autenticação via API Key.',
+  })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -45,7 +79,15 @@ export class ClientsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Dados inválidos',
+    description: 'Dados inválidos ou CPF duplicado',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'API Key não fornecida ou inválida',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Muitas requisições - Rate limit excedido',
   })
   async create(@Body() createUserDto: CreateUserDto) {
     if (!createUserDto || Object.keys(createUserDto).length === 0) {
@@ -59,10 +101,22 @@ export class ClientsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos os usuários' })
+  @ApiOperation({
+    summary: 'Listar todos os usuários',
+    description:
+      'Retorna todos os usuários cadastrados no sistema com suas transações. Utiliza cache Redis para performance.',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Lista de usuários retornada com sucesso (com cache)',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'API Key não fornecida ou inválida',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Muitas requisições - Rate limit excedido',
   })
   @UseInterceptors(CacheInterceptor)
   findAll() {

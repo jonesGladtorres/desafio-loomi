@@ -1,0 +1,34 @@
+# Configurações AWS
+aws_region  = "us-east-1"
+environment = "production"
+
+# VPC
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+# Database RDS PostgreSQL
+db_name             = "loomi_db"
+db_username         = "loomi_user"
+db_password         = "CHANGE_ME_STRONG_PASSWORD" # Altere para uma senha forte
+db_instance_class   = "db.t3.micro"
+db_allocated_storage = 20
+
+# Redis ElastiCache
+redis_node_type       = "cache.t3.micro"
+redis_num_cache_nodes = 1
+
+# Amazon MQ (RabbitMQ)
+mq_username      = "loomi_user"
+mq_password      = "CHANGE_ME_STRONG_PASSWORD" # Altere para uma senha forte
+mq_instance_type = "mq.t3.micro"
+
+# ECS Tasks - Clients Service
+clients_cpu           = "256"  # 0.25 vCPU
+clients_memory        = "512"  # 512 MB
+clients_desired_count = 2
+
+# ECS Tasks - Transactions Service
+transactions_cpu           = "256"
+transactions_memory        = "512"
+transactions_desired_count = 2
+

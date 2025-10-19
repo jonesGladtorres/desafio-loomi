@@ -4,9 +4,11 @@ import { PrismaModule } from '@app/prisma';
 import { TransactionsService } from './transactions.service';
 import { TransactionsController } from './transactions.controller';
 import { NotificationService } from '../services/notification.service';
+import { SecurityModule } from '@app/security';
 
 @Module({
   imports: [
+    SecurityModule, // Módulo de Segurança Global
     PrismaModule,
     ClientsModule.register([
       {
@@ -15,7 +17,7 @@ import { NotificationService } from '../services/notification.service';
         options: {
           urls: [
             process.env.RABBITMQ_URL ||
-              'amqp://loomi_user:loomi_password@localhost:5672',
+            'amqp://loomi_user:loomi_password@localhost:5672',
           ],
           queue: 'notifications_queue',
           queueOptions: {
@@ -29,4 +31,4 @@ import { NotificationService } from '../services/notification.service';
   providers: [TransactionsService, NotificationService],
   exports: [TransactionsService, NotificationService],
 })
-export class TransactionsResourceModule {}
+export class TransactionsResourceModule { }

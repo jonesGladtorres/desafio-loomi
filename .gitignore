@@ -1,88 +1,75 @@
-# Dependencies
-node_modules
+# compiled output
+/dist
+/node_modules
+
+# Logs
+logs
+*.log
 npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-# Build outputs
-dist
-build
+# OS
+.DS_Store
 
-# Environment files
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Environment
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# IDE files
-.vscode
-.idea
+# Prisma
+prisma/.env
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfvars
+terraform/*.tfplan
+terraform/crash.log
+terraform/.terraformrc
+terraform/terraform.rc
+
+# AWS
+.aws/
+
+# Certificates
+*.pem
+*.key
+*.crt
+
+# Temporary files
+*.tmp
+*.temp
 *.swp
 *.swo
+*~
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# Git
-.git
-.gitignore
-
-# Docker
-Dockerfile*
-docker-compose*.yml
-.dockerignore
-
-# Test files
-coverage
-*.test.ts
-*.spec.ts
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
+# Build artifacts
 *.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
+.npm

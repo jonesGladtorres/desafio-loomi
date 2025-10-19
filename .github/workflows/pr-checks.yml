@@ -1,0 +1,93 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - production
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Executar linter
+        run: npm run lint
+
+      - name: Executar testes
+        run: npm test
+
+      - name: Executar coverage
+        run: npm run test:cov
+
+      - name: Comentar coverage no PR
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          test-script: npm test
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        app: [clients, transactions]
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Build Docker image - ${{ matrix.app }}
+        run: |
+          docker build -t loomi-${{ matrix.app }}:test -f apps/${{ matrix.app }}/Dockerfile .
+
+      - name: Verificar vulnerabilidades
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: loomi-${{ matrix.app }}:test
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init -backend=false
+
+      - name: Terraform Format Check
+        run: |
+          cd terraform
+          terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        run: |
+          cd terraform
+          terraform validate
+
