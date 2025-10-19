@@ -26,13 +26,18 @@
     "prisma:migrate:deploy": "npx prisma migrate deploy",
     "prisma:studio": "npx prisma studio",
     "prisma:format": "npx prisma format",
-    "db:up": "docker-compose up -d",
-    "db:down": "docker-compose down",
-    "db:reset": "docker-compose down -v && docker-compose up -d",
+    "docker:start": "docker-compose up --build -d && echo '\n╔════════════════════════════════════════════════════════════════╗' && echo '║           🚀 Loomi - Sistema Iniciado com Sucesso!           ║' && echo '╚════════════════════════════════════════════════════════════════╝\n' && echo '📡 APIs REST:' && echo '   → Clients API ......... http://localhost:3001/api/users' && echo '   → Transactions API .... http://localhost:3002/api/transactions\n' && echo '📚 Documentação Swagger:' && echo '   → Clients API ......... http://localhost:3001/api/docs' && echo '   → Transactions API .... http://localhost:3002/api/docs\n' && echo '🔧 Infraestrutura:' && echo '   → PostgreSQL .......... localhost:5432 (loomi_user/loomi_password)' && echo '   → Redis ............... localhost:6379' && echo '   → RabbitMQ ............ localhost:5672' && echo '   → RabbitMQ UI ......... http://localhost:15672 (loomi_user/loomi_password)\n' && echo '💡 Comandos Úteis:' && echo '   → Ver status .......... npm run docker:ps' && echo '   → Ver logs ............ npm run docker:logs' && echo '   → Reiniciar ........... npm run docker:restart' && echo '   → Parar tudo .......... npm run docker:stop' && echo '   → Limpar tudo ......... npm run docker:clean\n' && echo '✨ Dica: Acesse o Swagger para testar os endpoints interativamente!\n'",
+    "docker:stop": "docker-compose down",
+    "docker:restart": "docker-compose restart",
+    "docker:logs": "docker-compose logs -f",
+    "docker:ps": "docker-compose ps",
+    "docker:clean": "docker-compose down -v --rmi all",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
+    "test:cov:open": "jest --coverage && open coverage/lcov-report/index.html",
+    "test:cov:show": "open coverage/lcov-report/index.html",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e:clients": "jest --config ./apps/clients/test/jest-e2e.json",
     "test:e2e:transactions": "jest --config ./apps/transactions/test/jest-e2e.json"
@@ -42,16 +47,21 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
+    "@nestjs/microservices": "^11.1.6",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.17.1",
+    "@types/uuid": "^10.0.0",
+    "amqp-connection-manager": "^5.0.0",
+    "amqplib": "^0.10.9",
     "cache-manager": "^7.2.4",
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
-    "prisma": "^6.17.1",
     "redis": "^5.8.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -71,6 +81,7 @@
     "globals": "^16.0.0",
     "jest": "^29.7.0",
     "prettier": "^3.4.2",
+    "prisma": "^6.17.1",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -98,6 +109,10 @@
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/apps/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^@app/prisma/(.*)$": "<rootDir>/libs/prisma/src/$1",
+      "^@app/prisma$": "<rootDir>/libs/prisma/src"
+    }
   }
 }

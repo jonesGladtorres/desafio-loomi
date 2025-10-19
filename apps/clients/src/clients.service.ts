@@ -3,7 +3,7 @@ import { PrismaService } from '@app/prisma';
 
 @Injectable()
 export class ClientsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   getHello(): string {
     return 'Hello World from Clients!';
@@ -18,7 +18,7 @@ export class ClientsService {
   async findOne(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      include: { transactions: true },
+      include: { sentTransactions: true, receivedTransactions: true },
     });
   }
 }

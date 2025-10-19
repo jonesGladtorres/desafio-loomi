@@ -1,0 +1,238 @@
+### Arquivo de testes da API de Usuários
+### Use com a extensão REST Client do VSCode
+
+@baseUrl = http://localhost:3001/api/users
+@contentType = application/json
+@userId = substituir-com-id-real
+
+###############################################
+# CRIAR USUÁRIOS
+###############################################
+
+### 1. Criar um novo usuário completo (com dados bancários)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva",
+  "email": "joao.silva@example.com",
+  "cpf": "123.456.789-09",
+  "phone": "(11) 98765-4321",
+  "address": "Rua das Flores, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "zipCode": "01234-567",
+  "bankAgency": "0001",
+  "bankAccount": "12345",
+  "bankAccountDigit": "6"
+}
+
+###
+
+### 2. Criar usuário mínimo (apenas campos obrigatórios)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Maria Santos",
+  "email": "maria.santos@example.com"
+}
+
+###
+
+### 3. Criar usuário com CPF válido
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Pedro Oliveira",
+  "email": "pedro.oliveira@example.com",
+  "cpf": "529.982.247-25",
+  "phone": "(21) 98765-4321"
+}
+
+###############################################
+# CONSULTAR USUÁRIOS
+###############################################
+
+### 4. Listar todos os usuários
+GET {{baseUrl}}
+
+###
+
+### 5. Buscar usuário por ID
+GET {{baseUrl}}/{{userId}}
+
+###############################################
+# ATUALIZAR USUÁRIOS
+###############################################
+
+### 6. Atualizar usuário (dados pessoais)
+PATCH {{baseUrl}}/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva Atualizado",
+  "phone": "(11) 91234-5678",
+  "address": "Rua Nova, 456"
+}
+
+###
+
+### 7. Atualizar dados bancários (dispara evento RabbitMQ)
+PATCH {{baseUrl}}/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "bankAgency": "0002",
+  "bankAccount": "54321",
+  "bankAccountDigit": "9"
+}
+
+###
+
+### 8. Atualizar foto de perfil
+PATCH {{baseUrl}}/{{userId}}/profile-picture
+Content-Type: {{contentType}}
+
+{
+  "profilePicture": "https://example.com/photos/user-{{userId}}.jpg"
+}
+
+###############################################
+# DELETAR USUÁRIOS
+###############################################
+
+### 9. Deletar um usuário
+DELETE {{baseUrl}}/{{userId}}
+
+# Resposta esperada:
+# {
+#   "message": "Usuário deletado com sucesso",
+#   "deletedUserId": "uuid-do-usuario-deletado"
+# }
+
+###############################################
+# TESTES DE CACHE
+###############################################
+
+### 10. Testar cache - Primeira requisição (será cacheada)
+GET {{baseUrl}}
+
+###
+
+### 11. Testar cache - Segunda requisição (virá do cache)
+GET {{baseUrl}}
+
+###
+
+### 12. Testar cache individual - Buscar usuário (será cacheado)
+GET {{baseUrl}}/{{userId}}
+
+###############################################
+# TESTES DE VALIDAÇÃO
+###############################################
+
+### 13. Teste de validação - CPF inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste CPF Inválido",
+  "email": "teste.cpf@example.com",
+  "cpf": "111.111.111-11"
+}
+
+###
+
+### 14. Teste de validação - Email inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Email",
+  "email": "email-invalido"
+}
+
+###
+
+### 15. Teste de validação - Telefone formato inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Telefone",
+  "email": "teste.telefone@example.com",
+  "phone": "11987654321"
+}
+
+###
+
+### 16. Teste de validação - CEP formato inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste CEP",
+  "email": "teste.cep@example.com",
+  "zipCode": "12345"
+}
+
+###
+
+### 17. Teste de validação - Agência bancária inválida (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Agência",
+  "email": "teste.agencia@example.com",
+  "bankAgency": "123"
+}
+
+###
+
+### 18. Teste de validação - URL de foto inválida (deve falhar)
+PATCH {{baseUrl}}/{{userId}}/profile-picture
+Content-Type: {{contentType}}
+
+{
+  "profilePicture": "not-a-valid-url"
+}
+
+###############################################
+# TESTES DE INTEGRAÇÃO RABBITMQ
+###############################################
+
+### 19. Criar usuário para teste de eventos
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Usuário Teste Eventos",
+  "email": "eventos@example.com",
+  "cpf": "456.789.123-64",
+  "phone": "(31) 98765-4321",
+  "bankAgency": "0003",
+  "bankAccount": "67890",
+  "bankAccountDigit": "1"
+}
+
+###
+
+### 20. Atualizar dados bancários (dispara evento user_banking_updated)
+### Observe os logs do microsserviço de transações para ver o evento sendo recebido
+PATCH {{baseUrl}}/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "bankAgency": "0004",
+  "bankAccount": "99999",
+  "bankAccountDigit": "2",
+  "address": "Avenida Principal, 789",
+  "city": "Belo Horizonte",
+  "state": "MG",
+  "zipCode": "30000-000"
+}
+
+###

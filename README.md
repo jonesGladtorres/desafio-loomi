@@ -1,368 +1,390 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Desafio Loomi - Sistema de Gestão de Clientes e Transações
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Sistema de microserviços desenvolvido com NestJS para gerenciamento de clientes e transações financeiras, utilizando arquitetura baseada em mensageria com RabbitMQ.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Sobre o Projeto
 
-## Description
+Este projeto implementa uma solução de microserviços para gestão de clientes e transações bancárias. A arquitetura é composta por dois serviços principais que se comunicam de forma assíncrona através do RabbitMQ, garantindo escalabilidade e desacoplamento.
 
-Monorepo NestJS para o Desafio Loomi contendo duas aplicações:
+### ✨ Funcionalidades Principais
 
-- **clients** - API para gerenciamento de clientes (porta 3001)
-- **transactions** - API para gerenciamento de transações (porta 3002)
+**Serviço de Clientes (`clients-app`)**
+- ✅ Cadastro, atualização e exclusão de clientes
+- ✅ Validação de CPF com algoritmo verificador
+- ✅ Upload de foto de perfil
+- ✅ Gerenciamento de dados bancários (agência, conta)
+- ✅ Cache com Redis para otimização de consultas
+- ✅ Documentação automática com Swagger
 
-## Estrutura do Projeto
+**Serviço de Transações (`transactions-app`)**
+- ✅ Criação e gerenciamento de transações (crédito, débito, transferência)
+- ✅ Validação de saldos e regras de negócio
+- ✅ Notificações assíncronas via RabbitMQ
+- ✅ Histórico completo de transações
+- ✅ Cache de dados frequentes
+- ✅ Documentação automática com Swagger
+
+## 🏗️ Arquitetura
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      LOOMI SYSTEM                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────┐         ┌──────────────────┐          │
+│  │  Clients API     │         │ Transactions API │          │
+│  │  (Port 3001)     │         │  (Port 3002)     │          │
+│  └────────┬─────────┘         └────────┬─────────┘          │
+│           │                            │                    │
+│           ├────────────┬───────────────┤                    │
+│           │            │               │                    │
+│      ┌────▼────┐  ┌───▼────┐     ┌───▼─────┐                │
+│      │PostgreSQL│  │ Redis  │     │RabbitMQ │               │
+│      │(5432)   │  │ (6379) │     │(5672)   │                │
+│      └─────────┘  └────────┘     └─────────┘                │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Framework:** NestJS 11.x
+- **Linguagem:** TypeScript 5.7.x
+- **Banco de Dados:** PostgreSQL 16 (Alpine)
+- **ORM:** Prisma 6.17.x
+- **Cache:** Redis 7 (Alpine)
+- **Mensageria:** RabbitMQ 3.13 (Management)
+- **Documentação:** Swagger/OpenAPI
+- **Containerização:** Docker & Docker Compose
+- **Validação:** class-validator & class-transformer
+
+## 📦 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
+
+- [Docker](https://www.docker.com/get-started) (versão 20.x ou superior)
+- [Docker Compose](https://docs.docker.com/compose/install/) (versão 2.x ou superior)
+
+## 🚀 Como Rodar o Projeto com Docker
+
+### Opção 1: Comando Rápido
+
+```bash
+npm run docker:start
+```
+
+Este comando irá:
+1. Construir as imagens Docker dos serviços
+2. Subir todos os containers (PostgreSQL, Redis, RabbitMQ, Clients API, Transactions API)
+3. Executar as migrations do banco de dados automaticamente
+4. Exibir as URLs de acesso aos serviços
+
+### Opção 2: Docker Compose Manual
+
+```bash
+# Subir todos os serviços
+docker-compose up --build -d
+
+# Ver logs em tempo real
+docker-compose logs -f
+
+# Ver status dos containers
+docker-compose ps
+```
+
+### 🔍 Verificando a Instalação
+
+Após executar o comando, você verá uma mensagem similar a:
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║           🚀 Loomi - Sistema Iniciado com Sucesso!           ║
+╚════════════════════════════════════════════════════════════════╝
+
+📡 APIs REST:
+   → Clients API ......... http://localhost:3001/api/users
+   → Transactions API .... http://localhost:3002/api/transactions
+
+📚 Documentação Swagger:
+   → Clients API ......... http://localhost:3001/api/docs
+   → Transactions API .... http://localhost:3002/api/docs
+
+🔧 Infraestrutura:
+   → PostgreSQL .......... localhost:5432 (loomi_user/loomi_password)
+   → Redis ............... localhost:6379
+   → RabbitMQ ............ localhost:5672
+   → RabbitMQ UI ......... http://localhost:15672 (loomi_user/loomi_password)
+
+💡 Comandos Úteis:
+   → Ver status .......... npm run docker:ps
+   → Ver logs ............ npm run docker:logs
+   → Reiniciar ........... npm run docker:restart
+   → Parar tudo .......... npm run docker:stop
+   → Limpar tudo ......... npm run docker:clean
+
+✨ Dica: Acesse o Swagger para testar os endpoints interativamente!
+```
+
+## 📚 Documentação da API
+
+Após iniciar os serviços, a documentação Swagger estará disponível em:
+
+- **Clients API:** http://localhost:3001/api/docs
+- **Transactions API:** http://localhost:3002/api/docs
+
+## 🔌 Endpoints Principais
+
+### Clients API (Port 3001)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/users` | Criar novo cliente |
+| GET | `/api/users` | Listar todos os clientes |
+| GET | `/api/users/:id` | Buscar cliente por ID |
+| GET | `/api/users/cpf/:cpf` | Buscar cliente por CPF |
+| PATCH | `/api/users/:id` | Atualizar dados do cliente |
+| PATCH | `/api/users/:id/profile-picture` | Atualizar foto de perfil |
+| DELETE | `/api/users/:id` | Excluir cliente |
+
+### Transactions API (Port 3002)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/transactions` | Criar nova transação |
+| GET | `/api/transactions` | Listar todas as transações |
+| GET | `/api/transactions/:id` | Buscar transação por ID |
+| GET | `/api/transactions/user/:userId` | Transações de um usuário |
+| PATCH | `/api/transactions/:id` | Atualizar transação |
+| DELETE | `/api/transactions/:id` | Cancelar transação |
+
+## 🗄️ Serviços e Portas
+
+| Serviço | Porta | Credenciais |
+|---------|-------|-------------|
+| PostgreSQL | 5432 | `loomi_user / loomi_password` |
+| Redis | 6379 | - |
+| RabbitMQ AMQP | 5672 | `loomi_user / loomi_password` |
+| RabbitMQ Management | 15672 | `loomi_user / loomi_password` |
+| Clients API | 3001 | - |
+| Transactions API | 3002 | - |
+
+## 🎯 Scripts NPM Disponíveis
+
+```bash
+# Docker
+npm run docker:start      # Iniciar todos os serviços
+npm run docker:stop       # Parar todos os serviços
+npm run docker:restart    # Reiniciar os serviços
+npm run docker:logs       # Ver logs em tempo real
+npm run docker:ps         # Ver status dos containers
+npm run docker:clean      # Remover containers, volumes e imagens
+
+# Prisma
+npm run prisma:generate   # Gerar Prisma Client
+npm run prisma:migrate    # Executar migrations
+npm run prisma:studio     # Abrir Prisma Studio
+
+# Desenvolvimento Local (sem Docker)
+npm run start:clients:dev       # Clients API em modo dev
+npm run start:transactions:dev  # Transactions API em modo dev
+
+# Testes
+npm run test                    # Executar testes unitários
+npm run test:watch              # Executar testes em modo watch
+npm run test:cov                # Executar testes com cobertura
+npm run test:cov:open           # Gerar cobertura e abrir no navegador
+npm run test:cov:show           # Abrir relatório de cobertura existente
+npm run test:e2e:clients        # Testes E2E do serviço de clientes
+npm run test:e2e:transactions   # Testes E2E do serviço de transações
+```
+
+## 🔧 Variáveis de Ambiente
+
+As variáveis de ambiente já estão configuradas no `docker-compose.yml`. Para desenvolvimento local, você pode criar um arquivo `.env`:
+
+```env
+# Database
+DATABASE_URL="postgresql://loomi_user:loomi_password@localhost:5432/loomi_db?schema=public"
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# RabbitMQ
+RABBITMQ_URL=amqp://loomi_user:loomi_password@localhost:5672
+
+# Node
+NODE_ENV=development
+```
+
+## 🛑 Parando os Serviços
+
+```bash
+# Parar todos os containers
+npm run docker:stop
+
+# Ou usar docker-compose diretamente
+docker-compose down
+
+# Para remover volumes e dados persistidos
+npm run docker:clean
+```
+
+## 📊 Monitoramento
+
+### RabbitMQ Management UI
+
+Acesse http://localhost:15672 para monitorar:
+- Filas de mensagens
+- Conexões ativas
+- Taxa de mensagens
+- Estatísticas gerais
+
+**Login:** `loomi_user` / `loomi_password`
+
+### Logs dos Serviços
+
+```bash
+# Ver logs de todos os serviços
+npm run docker:logs
+
+# Ver logs de um serviço específico
+docker-compose logs -f clients-app
+docker-compose logs -f transactions-app
+docker-compose logs -f rabbitmq
+```
+
+## 🏥 Health Checks
+
+Todos os serviços possuem health checks configurados:
+
+- **PostgreSQL:** Verifica conexão a cada 10s
+- **Redis:** Ping a cada 10s
+- **RabbitMQ:** Diagnostics a cada 10s
+- **APIs:** Health endpoint a cada 30s
+
+## 🧪 Testes
+
+O projeto possui uma suíte completa de testes unitários com alta cobertura de código.
+
+### 📊 Cobertura Atual
+
+| Componente | Cobertura | Testes |
+|------------|-----------|--------|
+| **Controllers** | 100% ✅ | 23 testes |
+| **Services** | 96%+ ✅ | 45 testes |
+| **Total** | 87%+ | 68 testes |
+
+### 🎯 Funcionalidades Testadas
+
+#### ClientsController & UsersService
+- ✅ Criação, listagem, busca, atualização e remoção de usuários
+- ✅ Validação de UUID nos parâmetros de rota
+- ✅ Validação de corpo vazio nas requisições
+- ✅ Atualização de foto de perfil
+- ✅ Emissão de eventos RabbitMQ para dados bancários
+- ✅ Gerenciamento de cache (invalidação)
+- ✅ Tratamento de erros (NotFoundException, BadRequestException)
+
+#### TransactionsController & TransactionsService
+- ✅ Criação de transações (crédito, débito, transferência)
+- ✅ Validação de regras de negócio por tipo de transação
+- ✅ Validação de existência de usuários
+- ✅ Listagem e busca de transações
+- ✅ Envio de notificações via RabbitMQ
+- ✅ Processamento de eventos de atualização bancária
+- ✅ Tratamento completo de erros
+
+### 🚀 Executando os Testes
+
+```bash
+# Testes básicos
+npm run test                    # Executar todos os testes
+npm run test:watch              # Modo watch (re-executa ao salvar)
+
+# Com cobertura
+npm run test:cov                # Gerar relatório de cobertura
+npm run test:cov:open           # Gerar e abrir no navegador
+npm run test:cov:show           # Abrir relatório existente (rápido)
+
+# Testes E2E
+npm run test:e2e:clients        # End-to-end do serviço clients
+npm run test:e2e:transactions   # End-to-end do serviço transactions
+```
+
+### 📈 Visualizando a Cobertura
+
+Após executar `npm run test:cov:open` ou `npm run test:cov:show`, você verá um relatório HTML interativo com:
+- Porcentagem de cobertura por arquivo
+- Linhas testadas vs não testadas (verde/vermelho)
+- Métricas detalhadas (Statements, Branches, Functions, Lines)
+
+## 📝 Estrutura do Projeto
 
 ```
 desafio-loomi-nestjs/
 ├── apps/
-│   ├── clients/           # Aplicação de clientes
+│   ├── clients/              # Microserviço de Clientes
 │   │   ├── src/
-│   │   ├── test/
-│   │   └── tsconfig.app.json
-│   └── transactions/      # Aplicação de transações
+│   │   │   ├── users/        # Módulo de usuários
+│   │   │   │   ├── dto/      # Data Transfer Objects
+│   │   │   │   ├── entities/ # Entidades
+│   │   │   │   └── validators/ # Validadores customizados
+│   │   │   └── main.ts
+│   │   └── Dockerfile
+│   │
+│   └── transactions/         # Microserviço de Transações
 │       ├── src/
-│       ├── test/
-│       └── tsconfig.app.json
+│       │   ├── transactions/ # Módulo de transações
+│       │   │   ├── dto/
+│       │   │   └── entities/
+│       │   ├── services/     # Serviço de notificações
+│       │   └── main.ts
+│       └── Dockerfile
+│
 ├── libs/
-│   └── prisma/            # Biblioteca compartilhada do Prisma
-│       └── src/
-│           ├── prisma.module.ts
-│           ├── prisma.service.ts
-│           └── index.ts
+│   ├── common/               # Utilitários compartilhados
+│   │   └── pipes/            # Pipes customizados (validação UUID)
+│   └── prisma/               # Biblioteca compartilhada do Prisma
+│
 ├── prisma/
-│   ├── migrations/        # Migrações do banco de dados
-│   │   └── 20241015030242_init/
-│   │       └── migration.sql
-│   └── schema.prisma      # Schema do Prisma com modelos User e Transaction
-├── docker-compose.yml     # Configuração do PostgreSQL e Redis
-├── .env                   # Variáveis de ambiente (não versionado)
-├── .env.example           # Template de variáveis de ambiente
-├── nest-cli.json          # Configuração do monorepo
-├── CACHE.md               # Documentação do sistema de cache
+│   ├── migrations/           # Migrations do banco de dados
+│   └── schema.prisma         # Schema do Prisma
+│
+├── coverage/                 # Relatórios de cobertura de testes
+├── docker-compose.yml        # Configuração Docker
 └── package.json
 ```
 
-## Instalação
+## ✨ Qualidade e Boas Práticas
 
-```bash
-$ npm install
-```
+### Validações Implementadas
+- ✅ **Validação de UUID:** Todos os IDs são validados com regex UUID v4
+- ✅ **Validação de Body:** Requisições vazias retornam erro apropriado
+- ✅ **Validação de CPF:** Algoritmo verificador completo
+- ✅ **Validação de DTOs:** class-validator em todos os endpoints
 
-## Configuração do Banco de Dados
+### Tratamento de Erros
+- ✅ **BadRequestException:** Dados inválidos, UUIDs malformados, bodies vazios
+- ✅ **NotFoundException:** Recursos não encontrados
+- ✅ **Mensagens claras:** Erros descritivos em português
 
-Este projeto usa Prisma ORM com PostgreSQL. Siga os passos abaixo para configurar:
+### Performance
+- ✅ **Cache com Redis:** Otimização de queries frequentes
+- ✅ **Invalidação inteligente:** Cache limpo após modificações
+- ✅ **Índices no banco:** Otimização de consultas
 
-### 1. Inicie o banco de dados PostgreSQL
+### Arquitetura
+- ✅ **Microserviços:** Separação clara de responsabilidades
+- ✅ **Event-Driven:** Comunicação assíncrona via RabbitMQ
+- ✅ **SOLID:** Princípios aplicados em toda a base de código
+- ✅ **DRY:** Reutilização de código com libs compartilhadas
 
-O projeto inclui um `docker-compose.yml` para facilitar a configuração do PostgreSQL:
+## 📄 Licença
 
-```bash
-# Inicie o PostgreSQL usando Docker Compose
-$ npm run db:up
-# ou
-$ docker-compose up -d
+Este projeto é privado e faz parte do processo seletivo da Loomi.
 
-# Verifique se o container está rodando
-$ docker-compose ps
+---
 
-# Para parar o banco de dados
-$ npm run db:down
+**Desenvolvido com ❤️ por Jones Torres usando NestJS**
 
-# Para resetar o banco (apaga todos os dados)
-$ npm run db:reset
-```
-
-**Credenciais do banco (já configuradas no .env):**
-- **Host**: localhost
-- **Port**: 5432
-- **Database**: loomi_db
-- **User**: loomi_user
-- **Password**: loomi_password
-
-**Redis (Cache):**
-- **Host**: localhost
-- **Port**: 6379
-
-### 2. Execute as migrações do Prisma
-
-```bash
-# Aplica as migrações existentes ao banco de dados
-$ npm run prisma:migrate:deploy
-
-# Ou cria uma nova migração (desenvolvimento)
-$ npm run prisma:migrate
-```
-
-### 3. Gere o Prisma Client
-
-```bash
-$ npm run prisma:generate
-```
-
-### 4. (Opcional) Visualize os dados
-
-```bash
-# Abre o Prisma Studio no navegador
-$ npm run prisma:studio
-```
-
-### Modelos do Banco de Dados
-
-O projeto possui dois modelos principais:
-
-- **User**: Modelo para gerenciamento de clientes
-  - Campos: id, name, email, cpf, phone, address, city, state, zipCode, createdAt, updatedAt
-  
-- **Transaction**: Modelo para gerenciamento de transações
-  - Campos: id, amount, type, description, status, userId, createdAt, updatedAt
-  - Relacionamento: Cada transação pertence a um usuário
-
-### Comandos úteis do Prisma
-
-```bash
-# Abre o Prisma Studio (interface visual do banco)
-$ npm run prisma:studio
-
-# Formata o schema
-$ npm run prisma:format
-
-# Gera o Prisma Client
-$ npm run prisma:generate
-
-# Valida o schema
-$ npx prisma validate
-```
-
-## Biblioteca Prisma Compartilhada
-
-O projeto possui uma biblioteca compartilhada (`@app/prisma`) que contém o `PrismaService` e `PrismaModule`. Esta biblioteca pode ser usada por ambas as aplicações (clients e transactions).
-
-### Como usar o PrismaService
-
-```typescript
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@app/prisma';
-
-@Injectable()
-export class YourService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  async findAll() {
-    // Acesse os modelos diretamente através do PrismaService
-    return this.prisma.user.findMany();
-  }
-}
-```
-
-### Configuração do Prisma Client
-
-O Prisma Client está configurado para ser gerado em `node_modules/@prisma/client`, garantindo que ambas as aplicações do monorepo possam acessá-lo sem problemas. Após qualquer alteração no `schema.prisma`, execute:
-
-```bash
-$ npx prisma generate
-```
-
-## Sistema de Cache com Redis
-
-O app **clients** está configurado com cache usando Redis para melhorar a performance das consultas.
-
-### Características do Cache
-
-- ✅ **Cache Global**: Configurado no `CacheModule` como global
-- ✅ **TTL**: 60 segundos (configurável)
-- ✅ **Invalidação Automática**: Cache é invalidado automaticamente ao criar, atualizar ou deletar usuários
-- ✅ **Endpoints Cacheados**: GET `/api/users` e GET `/api/users/:id`
-
-### Como Funciona
-
-1. **GET `/api/users`** - A primeira requisição busca do banco e armazena no cache. Requisições subsequentes retornam do cache até o TTL expirar ou o cache ser invalidado.
-
-2. **GET `/api/users/:id`** - Similar ao endpoint acima, mas cacheia usuários individualmente.
-
-3. **PATCH `/api/users/:id`** - Ao atualizar um usuário, o cache desse usuário específico e da lista de usuários é invalidado automaticamente.
-
-4. **POST `/api/users`** - Ao criar um usuário, o cache da lista de usuários é invalidado.
-
-5. **DELETE `/api/users/:id`** - Ao deletar um usuário, o cache desse usuário e da lista é invalidado.
-
-### Verificar Status do Cache
-
-```bash
-# Conectar ao Redis CLI
-docker exec -it loomi-redis redis-cli
-
-# Ver todas as chaves em cache
-KEYS *
-
-# Ver uma chave específica
-GET "/api/users"
-
-# Limpar todo o cache
-FLUSHALL
-```
-
-## Executar as Aplicações
-
-### Aplicação Clients (Porta 3001)
-
-```bash
-# desenvolvimento
-$ npm run start:clients
-
-# modo watch
-$ npm run start:clients:dev
-
-# modo debug
-$ npm run start:clients:debug
-
-# produção
-$ npm run start:clients:prod
-```
-
-#### Endpoints disponíveis:
-
-- **GET** `/api/users` - Lista todos os usuários
-- **GET** `/api/users/:id` - Busca um usuário por ID
-- **POST** `/api/users` - Cria um novo usuário
-- **PATCH** `/api/users/:id` - Atualiza um usuário
-- **DELETE** `/api/users/:id` - Remove um usuário
-
-**Exemplo de uso:**
-
-```bash
-# Criar um usuário
-curl -X POST http://localhost:3001/api/users \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "João Silva",
-    "email": "joao@example.com",
-    "cpf": "123.456.789-00",
-    "phone": "(11) 98765-4321"
-  }'
-
-# Buscar usuário por ID
-curl http://localhost:3001/api/users/{userId}
-
-# Listar todos os usuários
-curl http://localhost:3001/api/users
-
-# Atualizar um usuário (atualização parcial)
-curl -X PATCH http://localhost:3001/api/users/{userId} \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "João Silva Atualizado",
-    "phone": "(11) 91234-5678"
-  }'
-
-# Deletar um usuário
-curl -X DELETE http://localhost:3001/api/users/{userId}
-```
-
-💡 **Dica:** Use o arquivo `apps/clients/src/users/users.http` com a extensão REST Client do VSCode para testar os endpoints.
-
-📖 **Documentação completa:** 
-- `USAGE_EXAMPLES.md` - Exemplos detalhados de uso da API
-- `CACHE.md` - Documentação completa do sistema de cache com Redis
-
-⚡ **Cache**: Os endpoints GET estão otimizados com Redis para melhor performance!
-
-### Aplicação Transactions (Porta 3002)
-
-```bash
-# desenvolvimento
-$ npm run start:transactions
-
-# modo watch
-$ npm run start:transactions:dev
-
-# modo debug
-$ npm run start:transactions:debug
-
-# produção
-$ npm run start:transactions:prod
-```
-
-## Build das Aplicações
-
-```bash
-# Build de todas as aplicações
-$ npm run build
-
-# Build específico
-$ npm run build:clients
-$ npm run build:transactions
-```
-
-## Executar Testes
-
-```bash
-# testes unitários
-$ npm run test
-
-# testes e2e - clients
-$ npm run test:e2e:clients
-
-# testes e2e - transactions
-$ npm run test:e2e:transactions
-
-# cobertura de testes
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

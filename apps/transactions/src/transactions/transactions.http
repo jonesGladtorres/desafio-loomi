@@ -1,0 +1,237 @@
+### Arquivo de testes da API de Transações
+### Use com a extensão REST Client do VSCode
+
+@baseUrl = http://localhost:3002/api/transactions
+@contentType = application/json
+
+### Variáveis de exemplo (substitua com IDs reais)
+@senderUserId = 123e4567-e89b-12d3-a456-426614174000
+@receiverUserId = 987e6543-e21b-12d3-a456-426614174001
+@transactionId = 456e7890-e12b-34d5-a678-426614174002
+
+###############################################
+# CRIAR TRANSAÇÕES
+###############################################
+
+### 1. Criar uma transferência entre usuários
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 250.50,
+  "type": "transfer",
+  "description": "Transferência para João",
+  "status": "completed",
+  "senderUserId": "{{senderUserId}}",
+  "receiverUserId": "{{receiverUserId}}"
+}
+
+###
+
+### 2. Criar um débito
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "debit",
+  "description": "Pagamento de conta",
+  "status": "completed",
+  "senderUserId": "{{senderUserId}}"
+}
+
+###
+
+### 3. Criar um crédito
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 500.00,
+  "type": "credit",
+  "description": "Depósito em conta",
+  "status": "completed",
+  "receiverUserId": "{{receiverUserId}}"
+}
+
+###
+
+### 4. Criar uma transação com status pendente
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 1000.00,
+  "type": "transfer",
+  "description": "Transferência pendente de aprovação",
+  "status": "pending",
+  "senderUserId": "{{senderUserId}}",
+  "receiverUserId": "{{receiverUserId}}"
+}
+
+###
+
+### 5. Criar uma transação falhada
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 50.00,
+  "type": "debit",
+  "description": "Tentativa de pagamento",
+  "status": "failed",
+  "senderUserId": "{{senderUserId}}"
+}
+
+###############################################
+# CONSULTAR TRANSAÇÕES
+###############################################
+
+### 6. Listar todas as transações
+GET {{baseUrl}}
+
+###
+
+### 7. Buscar transação por ID
+GET {{baseUrl}}/{{transactionId}}
+
+###
+
+### 8. Buscar todas as transações de um usuário
+GET {{baseUrl}}/user/{{senderUserId}}
+
+###############################################
+# ATUALIZAR TRANSAÇÕES
+###############################################
+
+### 9. Atualizar status de uma transação
+PATCH {{baseUrl}}/{{transactionId}}
+Content-Type: {{contentType}}
+
+{
+  "status": "completed"
+}
+
+###
+
+### 10. Atualizar descrição de uma transação
+PATCH {{baseUrl}}/{{transactionId}}
+Content-Type: {{contentType}}
+
+{
+  "description": "Pagamento atualizado - Fatura Cartão"
+}
+
+###############################################
+# DELETAR TRANSAÇÕES
+###############################################
+
+### 11. Deletar uma transação
+DELETE {{baseUrl}}/{{transactionId}}
+
+# Resposta esperada:
+# {
+#   "message": "Transação deletada com sucesso",
+#   "deletedTransactionId": "uuid-da-transacao-deletada"
+# }
+
+###############################################
+# TESTES DE VALIDAÇÃO
+###############################################
+
+### 12. Teste de validação - Transferência sem receiverUserId (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "transfer",
+  "description": "Teste de validação",
+  "status": "pending",
+  "senderUserId": "{{senderUserId}}"
+}
+
+###
+
+### 13. Teste de validação - Débito sem senderUserId (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 50.00,
+  "type": "debit",
+  "description": "Teste de validação",
+  "status": "pending"
+}
+
+###
+
+### 14. Teste de validação - Crédito sem receiverUserId (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 200.00,
+  "type": "credit",
+  "description": "Teste de validação",
+  "status": "pending"
+}
+
+###
+
+### 15. Teste de validação - Valor negativo (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": -100.00,
+  "type": "credit",
+  "description": "Teste de valor negativo",
+  "status": "pending",
+  "receiverUserId": "{{receiverUserId}}"
+}
+
+###
+
+### 16. Teste de validação - Tipo inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "invalid_type",
+  "description": "Teste de tipo inválido",
+  "status": "pending",
+  "receiverUserId": "{{receiverUserId}}"
+}
+
+###
+
+### 17. Teste de validação - Status inválido (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "credit",
+  "description": "Teste de status inválido",
+  "status": "invalid_status",
+  "receiverUserId": "{{receiverUserId}}"
+}
+
+###
+
+### 18. Teste de validação - Transferência para o mesmo usuário (deve falhar)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "amount": 100.00,
+  "type": "transfer",
+  "description": "Teste de auto-transferência",
+  "status": "pending",
+  "senderUserId": "{{senderUserId}}",
+  "receiverUserId": "{{senderUserId}}"
+}
+
+###

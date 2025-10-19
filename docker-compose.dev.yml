@@ -1,8 +1,8 @@
 services:
-  # Database PostgreSQL
+  # Database PostgreSQL (Development)
   postgres:
     image: postgres:16-alpine
-    container_name: loomi-postgres
+    container_name: loomi-postgres-dev
     restart: unless-stopped
     ports:
       - '5432:5432'
@@ -11,69 +11,81 @@ services:
       POSTGRES_PASSWORD: loomi_password
       POSTGRES_DB: loomi_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_dev:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U loomi_user -d loomi_db']
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - loomi-network
+      - loomi-network-dev
 
-  # Cache Redis
+  # Cache Redis (Development)
   redis:
     image: redis:7-alpine
-    container_name: loomi-redis
+    container_name: loomi-redis-dev
     restart: unless-stopped
     ports:
       - '6379:6379'
     volumes:
-      - redis_data:/data
+      - redis_data_dev:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - loomi-network
+      - loomi-network-dev
 
-  # Message Broker RabbitMQ
+  # Message Broker RabbitMQ (Development)
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
-    container_name: loomi-rabbitmq
+    container_name: loomi-rabbitmq-dev
     restart: unless-stopped
     ports:
       - '5672:5672'   # AMQP protocol
-      - '15672:15672' # Management UI
+      - '15672:15672' # Management UI (http://localhost:15672)
     environment:
       RABBITMQ_DEFAULT_USER: loomi_user
       RABBITMQ_DEFAULT_PASS: loomi_password
       RABBITMQ_DEFAULT_VHOST: /
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_data_dev:/var/lib/rabbitmq
     healthcheck:
       test: ['CMD', 'rabbitmq-diagnostics', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - loomi-network
+      - loomi-network-dev
 
-  # Aplicação Clients
-  clients-app:
+  # Aplicação Clients (Development com Hot Reload)
+  clients-app-dev:
     build:
       context: .
-      dockerfile: apps/clients/Dockerfile
-    container_name: loomi-clients-app
+      dockerfile: apps/clients/Dockerfile.dev
+    container_name: loomi-clients-app-dev
     restart: unless-stopped
     ports:
       - '3001:3001'
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       DATABASE_URL: postgresql://loomi_user:loomi_password@postgres:5432/loomi_db?schema=public
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_URL: amqp://loomi_user:loomi_password@rabbitmq:5672
+    volumes:
+      # Sincroniza o código fonte para hot reload
+      - ./apps/clients:/app/apps/clients
+      - ./libs:/app/libs
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./nest-cli.json:/app/nest-cli.json
+      # Cache do node_modules para performance
+      - node_modules_dev:/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -82,28 +94,40 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - loomi-network
+      - loomi-network-dev
     healthcheck:
       test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3001/api/users']
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Aplicação Transactions
-  transactions-app:
+  # Aplicação Transactions (Development com Hot Reload)
+  transactions-app-dev:
     build:
       context: .
-      dockerfile: apps/transactions/Dockerfile
-    container_name: loomi-transactions-app
+      dockerfile: apps/transactions/Dockerfile.dev
+    container_name: loomi-transactions-app-dev
     restart: unless-stopped
     ports:
       - '3002:3002'
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       DATABASE_URL: postgresql://loomi_user:loomi_password@postgres:5432/loomi_db?schema=public
       REDIS_HOST: redis
       REDIS_PORT: 6379
       RABBITMQ_URL: amqp://loomi_user:loomi_password@rabbitmq:5672
+    volumes:
+      # Sincroniza o código fonte para hot reload
+      - ./apps/transactions:/app/apps/transactions
+      - ./libs:/app/libs
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./nest-cli.json:/app/nest-cli.json
+      # Cache do node_modules para performance
+      - node_modules_dev:/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -112,7 +136,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - loomi-network
+      - loomi-network-dev
     healthcheck:
       test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3002/api/transactions']
       interval: 30s
@@ -120,14 +144,16 @@ services:
       retries: 3
 
 volumes:
-  postgres_data:
+  postgres_data_dev:
     driver: local
-  redis_data:
+  redis_data_dev:
     driver: local
-  rabbitmq_data:
+  rabbitmq_data_dev:
+    driver: local
+  node_modules_dev:
     driver: local
 
 networks:
-  loomi-network:
+  loomi-network-dev:
     driver: bridge
 
