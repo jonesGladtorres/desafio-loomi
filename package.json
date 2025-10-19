@@ -128,7 +128,9 @@
     ],
     "moduleNameMapper": {
       "^@app/prisma/(.*)$": "<rootDir>/libs/prisma/src/$1",
-      "^@app/prisma$": "<rootDir>/libs/prisma/src"
+      "^@app/prisma$": "<rootDir>/libs/prisma/src",
+      "^@app/security/(.*)$": "<rootDir>/libs/security/$1",
+      "^@app/security$": "<rootDir>/libs/security"
     }
   }
 }
