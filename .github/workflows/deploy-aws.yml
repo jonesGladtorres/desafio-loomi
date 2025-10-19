@@ -1,10 +1,11 @@
 name: Deploy to AWS ECS
 
 on:
-  push:
-    branches:
-      - main
-      - production
+  # Deploy automático desabilitado temporariamente
+  # push:
+  #   branches:
+  #     - main
+  #     - production
   workflow_dispatch:
 
 env:
