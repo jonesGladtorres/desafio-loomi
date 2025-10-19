@@ -37,13 +37,14 @@ export class ClientsController {
   constructor(
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('health')
   @Public()
   @ApiOperation({
     summary: 'Health Check',
-    description: 'Endpoint público para verificar se a API está funcionando. Não requer autenticação.',
+    description:
+      'Endpoint público para verificar se a API está funcionando. Não requer autenticação.',
   })
   @ApiResponse({
     status: HttpStatus.OK,
